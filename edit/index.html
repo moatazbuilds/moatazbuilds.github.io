@@ -25,7 +25,7 @@ button{cursor:pointer}
 /* top bar */
 .bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 16px;background:var(--navy);color:#eef2f6}
 .bar h1{font-size:17px;margin:0;font-weight:700;letter-spacing:.02em}
-.bar a{color:#eef2f6}
+.bar a{color:#eef2f6;font-size:14px}
 .bar__status{font-size:14px;opacity:.9;display:flex;align-items:center;gap:7px}
 .dot{width:9px;height:9px;border-radius:50%;background:#7fd3a4;flex:none}
 .dot--dirty{background:var(--mark)}
@@ -146,6 +146,7 @@ dialog::backdrop{background:rgba(9,17,29,.6)}
   <h1>Site editor</h1>
   <div class="bar__status" role="status"><i class="dot" id="dot"></i><span id="status">Loading</span></div>
   <span class="bar__sp"></span>
+  <a id="live-link" href="../" target="_blank" rel="noopener">Open the live site</a>
   <div class="seg" role="group" aria-label="Preview size">
     <button type="button" id="pv-desktop" aria-pressed="true">Desktop</button>
     <button type="button" id="pv-phone" aria-pressed="false">Phone</button>
@@ -794,7 +795,7 @@ function formProject(form, p, i) {
     slugField,
     h('div', { class: 'two' },
       select('Where it shows on the home page', p.featured ? '1' : '', [['1', 'Featured, as a big card'], ['', 'More projects, as a list row']], function (v) { p.featured = !!v; }, true),
-      p.featured ? select('Card size', p.size || '', [['lead', 'Full width'], ['', 'Half width'], ['third', 'One third']], function (v) { p.size = v; }) : null),
+      p.featured ? select('Card size', p.size || '', [['lead', 'Full width'], ['', 'Half width'], ['third', 'One third']], function (v) { p.size = v; }, true) : null),
     h('div', { class: 'field' }, h('span', { class: 'lbl' }, 'Skill areas this project shows'),
       h('div', { class: 'checks' }, c.pillars.map(function (pl) {
         return check(pl.label, p.pillars.indexOf(pl.key) > -1, function (v) {
@@ -829,6 +830,31 @@ function formProject(form, p, i) {
         p.cover ? h('button', { class: 'sbtn', type: 'button', onclick: function () { p.cover = null; p.thumb = null; p.lead = null; changed(true); } }, 'Remove') : null),
       h('p', { class: 'hint' }, 'Cropped to 4:3 from the center. Used on the home page and at the top of the project page.'),
       p.cover ? field('Describe the photo', p.cover.alt, function (v) { p.cover.alt = v; }, { hint: 'For screen readers and search engines.' }) : null))));
+
+  if (p.featured && p.size === 'lead') {
+    p.strip = p.strip || [];
+    var sg = group('Small pictures on the full-width card',
+      h('p', { class: 'hint', style: 'margin:0 0 10px' }, 'Up to three small pictures with a short label each. They only show while this card is set to full width.'));
+    p.strip.forEach(function (s, si) {
+      sg.appendChild(h('div', { class: 'mitem' },
+        h('img', { alt: '', src: urlFor(s.src) }),
+        h('div', null,
+          field('Label', s.label, function (v) { s.label = v; }),
+          h('div', { class: 'tools' },
+            h('span', { style: 'flex:1' }),
+            iconBtn('\u2190', 'Move earlier', function () { move(p.strip, si, -1); changed(true); }, si === 0),
+            iconBtn('\u2192', 'Move later', function () { move(p.strip, si, 1); changed(true); }, si === p.strip.length - 1),
+            iconBtn('\u2715', 'Remove', function () { p.strip.splice(si, 1); changed(true); })))));
+    });
+    if (p.strip.length < 3) {
+      sg.appendChild(filePick('Add a small picture', 'image/*', false, function (files) {
+        busy('Preparing picture');
+        addCrop(files[0], 'strip-' + p.slug, 4 / 3, 480, 0.8).then(function (r) { r.label = ''; p.strip.push(r); busy(''); changed(true); },
+          function (e) { busy(''); notice(e.message, 'bad'); });
+      }));
+    }
+    form.appendChild(sg);
+  }
 
   form.appendChild(group('Quick facts table', pairs(p.facts, 'Label', 'Value', FACT)));
 
@@ -924,7 +950,7 @@ function formMediaRow(p, s, g, gi) {
 /* ============================================================== GitHub */
 function gh(path, opts) {
   opts = opts || {};
-  var headers = { 'Accept': opts.raw ? 'application/vnd.github.raw+json' : 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+  var headers = { 'Accept': opts.raw ? 'application/vnd.github.raw+json' : 'application/vnd.github+json' };
   if (state.token) { headers.Authorization = 'Bearer ' + state.token; }
   if (opts.body) { headers['Content-Type'] = 'application/json'; }
   return fetch(API + '/repos/' + OWNER + '/' + REPO + path, { method: opts.method || 'GET', headers: headers, body: opts.body ? JSON.stringify(opts.body) : undefined, cache: 'no-store' })
