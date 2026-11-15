@@ -107,15 +107,15 @@
       '<div class="step__body"><div class="step__text">' + text + '</div>' + groups.map(media).join('') + '</div></section>';
   }
 
-  function projectView(p, idx, total, prev, nxt) {
+  function projectView(p, idx, total, prev, nxt, shown) {
     var numbered = p.numbered !== false;
     var facts = (p.facts || []).filter(function (f) { return f[0] && f[1]; }).map(function (f) { return '<dt>' + t(f[0]) + '</dt><dd>' + t(f[1]) + '</dd>'; }).join('');
-    var rel = p.related && p.related.slug ? '<a class="textlink related" href="#' + p.related.slug + '">' + t(p.related.label) + '</a>' : '';
+    var rel = p.related && p.related.slug && shown[p.related.slug] ? '<a class="textlink related" href="#' + p.related.slug + '">' + t(p.related.label) + '</a>' : '';
     var cover = p.cover
       ? '<figure class="pcover">' + image(p.cover, p.cover.alt, false) + '</figure>'
       : '<div class="pcover pcover--empty"><span>photos for this one are not in the folder yet</span></div>';
     var proc = '', steps = '';
-    (p.steps || []).forEach(function (s, i) {
+    (p.steps || []).filter(function (s) { return !s.hidden; }).forEach(function (s, i) {
       var k = i + 1, b = numbered ? '<b>' + k + '</b>' : '';
       proc += '<li><button type="button" data-jump="' + p.slug + '-s' + k + '">' + b + t(s.title) + '</button></li>';
       steps += step(p, k, s);
@@ -309,9 +309,10 @@
       '</div>\n' +
       '</section>';
 
-    var views = '', n = vp.order.length;
+    var views = '', n = vp.order.length, shown = {};
+    vp.order.forEach(function (p) { shown[p.slug] = true; });
     vp.order.forEach(function (p, i) {
-      views += projectView(p, i + 1, n, vp.order[(i - 1 + n) % n], vp.order[(i + 1) % n]);
+      views += projectView(p, i + 1, n, vp.order[(i - 1 + n) % n], vp.order[(i + 1) % n], shown);
     });
 
     var foot = '<footer class="foot" id="contact">\n' +
@@ -362,9 +363,6 @@
       else if (reserved.indexOf(p.slug) > -1) { errs.push(name + ': the link name "' + p.slug + '" is used by the site itself. Pick another.'); }
       else if (seen[p.slug]) { errs.push(name + ': another project already uses the link name "' + p.slug + '".'); }
       seen[p.slug] = true;
-      if (p.related && p.related.slug && !(c.projects || []).some(function (q) { return q.slug === p.related.slug && !q.hidden; })) {
-        errs.push(name + ': the related project link points at a project that does not exist or is hidden.');
-      }
       (p.steps || []).forEach(function (s, k) { if (!s.title) { errs.push(name + ': section ' + (k + 1) + ' needs a title.'); } });
     });
     if (!(c.projects || []).some(function (p) { return !p.hidden; })) { errs.push('At least one project has to be visible.'); }
