@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Site editor</title>
+<link rel="icon" href="data:,">
+<style>
+:root{
+  --navy:#17273d; --navy-2:#21344d; --mark:#f2c43a; --mark-2:#ffd95e;
+  --bg:#eef1f5; --panel:#ffffff; --ink:#15243a; --soft:#55657a; --rule:#d5dce5; --rule-2:#b9c4d0;
+  --good:#1f7a4d; --bad:#b3261e; --warn-bg:#fff6d2;
+  --font:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font:15px/1.45 var(--font);color:var(--ink);background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid #2a6fdb;outline-offset:1px}
+[hidden]{display:none !important}
+
+/* top bar */
+.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 16px;background:var(--navy);color:#eef2f6}
+.bar h1{font-size:17px;margin:0;font-weight:700;letter-spacing:.02em}
+.bar a{color:#eef2f6}
+.bar__status{font-size:14px;opacity:.9;display:flex;align-items:center;gap:7px}
+.dot{width:9px;height:9px;border-radius:50%;background:#7fd3a4;flex:none}
+.dot--dirty{background:var(--mark)}
+.dot--busy{background:#9cc5f7;animation:pulse 1s infinite alternate}
+@keyframes pulse{to{opacity:.35}}
+.bar__sp{flex:1}
+.btn{border:1.5px solid rgba(238,242,246,.7);background:transparent;color:#eef2f6;border-radius:4px;padding:8px 13px;font-weight:600;font-size:14px}
+.btn:hover{background:rgba(238,242,246,.14)}
+.btn--go{background:var(--mark);border-color:var(--mark);color:var(--ink)}
+.btn--go:hover{background:var(--mark-2)}
+.btn[disabled]{opacity:.5;cursor:default}
+.seg{display:inline-flex;border:1.5px solid rgba(238,242,246,.7);border-radius:4px;overflow:hidden}
+.seg button{border:0;background:transparent;color:#eef2f6;padding:7px 11px;font-size:13px;font-weight:600}
+.seg button[aria-pressed="true"]{background:#eef2f6;color:var(--ink)}
+
+.notice{padding:10px 16px;background:var(--warn-bg);border-bottom:1px solid #e3cf7a;display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.notice--bad{background:#fde8e6;border-bottom-color:#efb0aa}
+.notice--good{background:#e3f4ea;border-bottom-color:#a9d8bd}
+.notice p{margin:0;flex:1;min-width:240px;white-space:pre-line}
+.notice .sbtn{flex:none}
+
+/* layout */
+.cols{flex:1;display:grid;grid-template-columns:250px minmax(380px,520px) minmax(0,1fr);grid-template-rows:minmax(0,1fr);min-height:0}
+.side{background:var(--panel);border-right:1px solid var(--rule);overflow:auto;padding:12px 10px 30px}
+.form{overflow:auto;padding:18px 20px 80px}
+.pv{position:relative;overflow:hidden;background:#0f1b2d;border-left:1px solid var(--rule)}
+.pv iframe{position:absolute;top:0;left:0;border:0;transform-origin:0 0;background:#17273d}
+.pv__empty{position:absolute;inset:0;display:grid;place-items:center;color:#cdd8e4;padding:20px;text-align:center}
+
+/* sidebar */
+.side h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin:16px 8px 6px}
+.side h2:first-child{margin-top:4px}
+.nav{display:block;width:100%;text-align:left;border:1px solid transparent;background:transparent;border-radius:5px;padding:7px 8px;display:flex;align-items:center;gap:6px}
+.nav:hover{background:#f1f4f8}
+.nav[aria-current="true"]{background:var(--navy);color:#fff}
+.nav span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav small{font-size:11px;border:1px solid currentColor;border-radius:3px;padding:0 4px;opacity:.8;flex:none}
+.nav.is-over{border-color:#2a6fdb;border-style:dashed}
+.add{margin:10px 8px 0;width:calc(100% - 16px)}
+.sbtn{border:1.5px solid var(--rule-2);background:#fff;border-radius:4px;padding:6px 10px;font-weight:600;font-size:13px;color:var(--ink)}
+.sbtn:hover{background:#f1f4f8}
+.sbtn--danger{color:var(--bad);border-color:#e4b4af}
+.sbtn--primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.sbtn--primary:hover{background:var(--navy-2)}
+.ibtn{border:1px solid var(--rule-2);background:#fff;border-radius:4px;width:30px;height:30px;padding:0;display:inline-grid;place-items:center;font-size:14px;line-height:1;color:var(--ink);flex:none}
+.ibtn:hover{background:#f1f4f8}
+.ibtn[disabled]{opacity:.35;cursor:default}
+
+/* form */
+.form h2{font-size:22px;margin:0 0 4px}
+.form .sub{color:var(--soft);margin:0 0 16px;font-size:14px}
+.group{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:14px 16px 16px;margin-bottom:14px}
+.group>h3{font-size:15px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.group>h3 span{flex:1}
+.field{margin-bottom:12px}
+.field:last-child{margin-bottom:0}
+.field label,.lbl{display:block;font-weight:600;font-size:13px;margin-bottom:4px}
+.field input[type="text"],.field input[type="url"],.field input[type="email"],.field textarea,.field select,.rowin input{width:100%;border:1px solid var(--rule-2);border-radius:4px;padding:8px 9px;background:#fff}
+.field textarea{resize:vertical;min-height:60px}
+.hint{font-size:12.5px;color:var(--soft);margin:4px 0 0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.checks{display:flex;flex-wrap:wrap;gap:6px 16px}
+.check{display:flex;align-items:center;gap:7px;font-size:14px}
+.check input{width:17px;height:17px;margin:0}
+.field label.check,.tools label.check{display:flex;font-weight:400;font-size:14px;margin:0}
+.rowin{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr) auto;gap:6px;margin-bottom:6px;align-items:center}
+.rowin--even{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto}
+.tools{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.step{border:1px solid var(--rule-2);border-radius:6px;margin-bottom:12px;background:#fbfcfd}
+.step__head{display:flex;gap:6px;align-items:center;padding:8px 10px;background:#eef1f5;border-bottom:1px solid var(--rule-2);border-radius:6px 6px 0 0}
+.step__head b{flex:none;width:24px;height:24px;display:grid;place-items:center;border:1.5px solid var(--ink);font-size:13px}
+.step__head input{flex:1;min-width:0;border:1px solid var(--rule-2);border-radius:4px;padding:6px 8px;font-weight:600}
+.step__body{padding:12px}
+.mrow{border:1px dashed var(--rule-2);border-radius:6px;padding:10px;margin-bottom:10px;background:#fff}
+.mrow__top{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px}
+.mrow__top .field{margin:0;min-width:110px}
+.mitem{display:grid;grid-template-columns:92px minmax(0,1fr);gap:10px;padding:8px 0;border-top:1px solid var(--rule)}
+.mitem img{width:92px;height:69px;object-fit:cover;border:1px solid var(--rule-2);border-radius:3px;background:#e7ecf1}
+.mitem .field{margin-bottom:6px}
+.mitem .field input{padding:6px 8px}
+.thumb{width:160px;height:120px;object-fit:cover;border:1px solid var(--rule-2);border-radius:4px;background:repeating-linear-gradient(135deg,#eef2f6 0 9px,#e1e8ef 9px 10px);display:block}
+.thumb--portrait{width:120px;height:150px}
+.filebtn{position:relative;display:inline-block}
+.filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.filebtn input:focus-visible + span{outline:3px solid #2a6fdb;outline-offset:1px}
+.filebtn span{display:inline-block}
+.coverrow{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.coverrow>div{flex:1;min-width:200px}
+.story{border:1px solid var(--rule);border-radius:5px;padding:8px;margin-bottom:8px;background:#fff}
+.role{border-left:3px solid var(--rule-2);padding-left:10px;margin:0 0 14px}
+
+/* dialog */
+dialog{border:0;border-radius:8px;padding:0;max-width:min(92vw,640px);width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(9,17,29,.6)}
+.dlg{padding:20px 22px 22px}
+.dlg h2{margin:0 0 8px;font-size:20px}
+.dlg ol{padding-left:20px;margin:10px 0}
+.dlg li{margin-bottom:6px}
+.dlg code{background:#eef1f5;padding:1px 5px;border-radius:3px;font-size:13px}
+.dlg__foot{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+.dlg__msg{margin:10px 0 0;font-size:14px}
+.ok{color:var(--good)} .err{color:var(--bad)}
+
+@media (max-width:1100px){
+  body{overflow:auto}
+  .cols{grid-template-columns:220px minmax(0,1fr);grid-template-rows:auto;height:auto}
+  .pv{grid-column:1/-1;height:70vh;border-left:0;border-top:1px solid var(--rule)}
+}
+@media (max-width:700px){
+  .cols{grid-template-columns:minmax(0,1fr)}
+  .side{border-right:0;border-bottom:1px solid var(--rule);max-height:40vh}
+  .two{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header class="bar">
+  <h1>Site editor</h1>
+  <div class="bar__status" role="status"><i class="dot" id="dot"></i><span id="status">Loading</span></div>
+  <span class="bar__sp"></span>
+  <div class="seg" role="group" aria-label="Preview size">
+    <button type="button" id="pv-desktop" aria-pressed="true">Desktop</button>
+    <button type="button" id="pv-phone" aria-pressed="false">Phone</button>
+  </div>
+  <button class="btn" type="button" id="btn-discard" disabled>Discard changes</button>
+  <button class="btn" type="button" id="btn-zip">Download .zip</button>
+  <button class="btn" type="button" id="btn-connect">GitHub connection</button>
+  <button class="btn btn--go" type="button" id="btn-publish">Publish</button>
+</header>
+<div id="notices"></div>
+<div class="cols">
+  <nav class="side" id="side" aria-label="Pages and projects"></nav>
+  <main class="form" id="form"></main>
+  <section class="pv" id="pv" aria-label="Live preview">
+    <iframe id="pv-a" title="Preview of the site"></iframe>
+    <iframe id="pv-b" title="Preview of the site" style="visibility:hidden"></iframe>
+    <div class="pv__empty" id="pv-empty">Loading the preview</div>
+  </section>
+</div>
+
+<dialog id="dlg-connect" aria-labelledby="dlg-connect-title">
+  <div class="dlg">
+    <h2 id="dlg-connect-title">Connect to GitHub</h2>
+    <p>Publish needs an access key from GitHub. You make it once. It is saved only in this browser.</p>
+    <ol>
+      <li>Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a> while signed in as <b id="dlg-owner"></b>.</li>
+      <li>Token name: anything, for example <code>Site editor</code>. Pick an expiration you are comfortable with.</li>
+      <li>Repository access: choose <b>Only select repositories</b> and pick <code id="dlg-repo"></code>.</li>
+      <li>Permissions: open Repository permissions and set <b>Contents</b> to <b>Read and write</b>.</li>
+      <li>Click Generate token, copy it, and paste it here.</li>
+    </ol>
+    <div class="field">
+      <label for="token-input">Access key</label>
+      <input type="text" id="token-input" autocomplete="off" spellcheck="false" placeholder="github_pat_...">
+    </div>
+    <p class="dlg__msg" id="token-msg" role="status"></p>
+    <div class="dlg__foot">
+      <button class="sbtn sbtn--danger" type="button" id="token-forget">Forget saved key</button>
+      <button class="sbtn" type="button" id="token-cancel">Close</button>
+      <button class="sbtn sbtn--primary" type="button" id="token-save">Save and test</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+/* ============================================================== settings */
+var OWNER = 'moatazbuilds', REPO = 'moatazbuilds.github.io', BRANCH = 'main';
+var SITE_ROOT = new URL('../', location.href).href;
+var API = 'https://api.github.com';
+var KEY_TOKEN = 'ms-editor-token', KEY_DRAFT = 'ms-editor-draft';
+var MAX_IMAGE_EDGE = 1800, VIDEO_WARN_MB = 25, VIDEO_MAX_MB = 50;
+
+var state = {
+  content: null, original: '', shell: '', baseRefs: [], baseSha: '',
+  pending: new Map(), kept: new Map(), urls: new Map(), token: '', sel: { kind: 'home', i: 0 },
+  busy: '', pvWidth: 1280
+};
+</script>
+<script>
+/* ============================================================== small helpers */
+function $(s, r) { return (r || document).querySelector(s); }
+function h(tag, attrs) {
+  var e = document.createElement(tag), k, v;
+  for (k in (attrs || {})) {
+    v = attrs[k];
+    if (v == null || v === false) { continue; }
+    if (k === 'class') { e.className = v; }
+    else if (k.slice(0, 2) === 'on') { e.addEventListener(k.slice(2), v); }
+    else if (k === 'value') { e.value = v; }
+    else if (k === 'checked') { e.checked = !!v; }
+    else { e.setAttribute(k, v === true ? '' : v); }
+  }
+  for (var i = 2; i < arguments.length; i++) { addKid(e, arguments[i]); }
+  return e;
+}
+function addKid(e, c) {
+  if (c == null || c === false) { return; }
+  if (Array.isArray(c)) { c.forEach(function (x) { addKid(e, x); }); return; }
+  e.appendChild(c.nodeType ? c : document.createTextNode(String(c)));
+}
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+function slugify(s) {
+  return String(s || '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+function rand4() {
+  var a = new Uint32Array(1); crypto.getRandomValues(a);
+  return ('0000' + a[0].toString(36)).slice(-4);
+}
+function lines(s) { return s.split('\n').map(function (x) { return x.trim(); }).filter(Boolean); }
+function paras(s) { return s.split(/\n\s*\n/).map(function (x) { return x.replace(/\s*\n\s*/g, ' ').trim(); }).filter(Boolean); }
+function mb(n) { return (n / 1048576).toFixed(1) + ' MB'; }
+function move(arr, i, d) { var j = i + d; if (j < 0 || j >= arr.length) { return; } var x = arr[i]; arr[i] = arr[j]; arr[j] = x; }
+function monthYear() { return new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }); }
+function isDirty() { return !!state.content && JSON.stringify(state.content) !== state.original; }
+
+/* notices */
+function notice(text, kind, actions) {
+  var box = h('div', { class: 'notice' + (kind ? ' notice--' + kind : ''), role: kind === 'bad' ? 'alert' : 'status' }, h('p', null, text));
+  (actions || []).forEach(function (a) {
+    box.appendChild(h('button', { class: 'sbtn', type: 'button', onclick: function () { box.remove(); a.run(); } }, a.label));
+  });
+  box.appendChild(h('button', { class: 'sbtn', type: 'button', onclick: function () { box.remove(); } }, 'Dismiss'));
+  $('#notices').appendChild(box);
+  return box;
+}
+function clearNotices() { $('#notices').textContent = ''; }
+function setStatus() {
+  var dot = $('#dot'), s = $('#status'), dirty = isDirty();
+  dot.className = 'dot' + (state.busy ? ' dot--busy' : dirty ? ' dot--dirty' : '');
+  s.textContent = state.busy || (dirty ? 'Unpublished changes' : 'Everything is published');
+  $('#btn-discard').disabled = !dirty || !!state.busy;
+  $('#btn-publish').disabled = !!state.busy;
+  $('#btn-zip').disabled = !!state.busy;
+}
+function busy(msg) { state.busy = msg || ''; setStatus(); }
+</script>
+<script>
+/* ============================================================== saved drafts and uploads waiting to publish */
+function idb() {
+  return new Promise(function (res, rej) {
+    var r = indexedDB.open('ms-editor', 1);
+    r.onupgradeneeded = function () { r.result.createObjectStore('pending'); };
+    r.onsuccess = function () { res(r.result); };
+    r.onerror = function () { rej(r.error); };
+  });
+}
+function idbRun(mode, fn) {
+  return idb().then(function (db) {
+    return new Promise(function (res, rej) {
+      var tx = db.transaction('pending', mode), out = fn(tx.objectStore('pending'));
+      tx.oncomplete = function () { db.close(); res(out); };
+      tx.onerror = function () { db.close(); rej(tx.error); };
+    });
+  }).catch(function () { return null; });
+}
+function pendingAdd(path, blob) {
+  if (state.urls.has(path)) { URL.revokeObjectURL(state.urls.get(path)); state.urls.delete(path); }
+  state.pending.set(path, blob);
+  idbRun('readwrite', function (st) { st.put(blob, path); });
+}
+function pendingClear() {
+  state.urls.forEach(function (u) { URL.revokeObjectURL(u); });
+  state.urls.clear(); state.pending.clear();
+  idbRun('readwrite', function (st) { st.clear(); });
+}
+function pendingLoad() {
+  return idbRun('readonly', function (st) {
+    var out = { keys: st.getAllKeys(), vals: st.getAll() };
+    return out;
+  }).then(function (out) {
+    if (!out) { return; }
+    var keys = out.keys.result || [], vals = out.vals.result || [];
+    keys.forEach(function (k, i) { state.pending.set(k, vals[i]); });
+  });
+}
+function urlFor(path) {
+  if (!path) { return ''; }
+  if (state.pending.has(path)) {
+    if (!state.urls.has(path)) { state.urls.set(path, URL.createObjectURL(state.pending.get(path))); }
+    return state.urls.get(path);
+  }
+  if (state.kept.has(path)) {
+    if (!state.urls.has(path)) { state.urls.set(path, URL.createObjectURL(state.kept.get(path))); }
+    return state.urls.get(path);
+  }
+  return SITE_ROOT + path;
+}
+/* After a publish the uploads leave the waiting list, but stay viewable until the live site has them. */
+function pendingPublished() {
+  state.pending.forEach(function (b, k) { state.kept.set(k, b); });
+  state.pending.clear();
+  idbRun('readwrite', function (st) { st.clear(); });
+}
+var draftTimer = 0;
+function saveDraftSoon() {
+  clearTimeout(draftTimer);
+  draftTimer = setTimeout(function () {
+    try {
+      if (isDirty()) { localStorage.setItem(KEY_DRAFT, JSON.stringify({ at: Date.now(), content: state.content })); }
+      else { localStorage.removeItem(KEY_DRAFT); }
+    } catch (e) {}
+  }, 700);
+}
+function readDraft() { try { return JSON.parse(localStorage.getItem(KEY_DRAFT) || 'null'); } catch (e) { return null; } }
+function dropDraft() { try { localStorage.removeItem(KEY_DRAFT); } catch (e) {} }
+</script>
+<script>
+/* ============================================================== images and videos */
+function canvasOf(w, h) { var c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
+function loadBitmap(file) {
+  if (window.createImageBitmap) {
+    return createImageBitmap(file, { imageOrientation: 'from-image' }).catch(function () { return loadImg(file); });
+  }
+  return loadImg(file);
+}
+function loadImg(file) {
+  return new Promise(function (res, rej) {
+    var u = URL.createObjectURL(file), im = new Image();
+    im.onload = function () { URL.revokeObjectURL(u); res(im); };
+    im.onerror = function () { URL.revokeObjectURL(u); rej(new Error('This file could not be read as an image: ' + file.name)); };
+    im.src = u;
+  });
+}
+function encode(canvas, q) {
+  return new Promise(function (res, rej) {
+    canvas.toBlob(function (b) {
+      if (b && b.type === 'image/webp') { res({ blob: b, ext: 'webp' }); return; }
+      canvas.toBlob(function (j) { if (j) { res({ blob: j, ext: 'jpg' }); } else { rej(new Error('This browser could not save the image.')); } }, 'image/jpeg', q + 0.03);
+    }, 'image/webp', q);
+  });
+}
+function draw(src, sx, sy, sw, sh, ow, oh) {
+  var c = canvasOf(ow, oh), g = c.getContext('2d');
+  g.fillStyle = '#fff'; g.fillRect(0, 0, ow, oh);
+  g.imageSmoothingQuality = 'high';
+  g.drawImage(src, sx, sy, sw, sh, 0, 0, ow, oh);
+  return c;
+}
+function fitted(src, maxEdge) {
+  var w = src.width, hh = src.height, k = Math.min(1, maxEdge / Math.max(w, hh));
+  return draw(src, 0, 0, w, hh, Math.max(1, Math.round(w * k)), Math.max(1, Math.round(hh * k)));
+}
+function cropped(src, aspect, outW) {
+  var w = src.width, hh = src.height, sw = w, sh = hh, sx = 0, sy = 0;
+  if (w / hh > aspect) { sw = Math.round(hh * aspect); sx = Math.round((w - sw) / 2); }
+  else { sh = Math.round(w / aspect); sy = Math.round((hh - sh) / 2); }
+  var ow = Math.min(outW, sw);
+  return draw(src, sx, sy, sw, sh, ow, Math.round(ow / aspect));
+}
+function nameBase(file) { return slugify(file.name.replace(/\.[^.]+$/, '')).slice(0, 36) || 'file'; }
+
+/* A photo for a section: scaled down and compressed. GIFs and SVGs are kept as they are. */
+function addImage(file, prefix) {
+  return loadBitmap(file).then(function (bm) {
+    if (file.type === 'image/gif' || file.type === 'image/svg+xml') {
+      var ext = file.type === 'image/gif' ? 'gif' : 'svg';
+      var p0 = 'assets/img/' + prefix + '-' + nameBase(file) + '-' + rand4() + '.' + ext;
+      pendingAdd(p0, file);
+      return { type: 'img', src: p0, w: bm.width || 1200, h: bm.height || 900, cap: '', alt: '' };
+    }
+    var c = fitted(bm, MAX_IMAGE_EDGE);
+    return encode(c, 0.82).then(function (r) {
+      var path = 'assets/img/' + prefix + '-' + nameBase(file) + '-' + rand4() + '.' + r.ext;
+      pendingAdd(path, r.blob);
+      return { type: 'img', src: path, w: c.width, h: c.height, cap: '', alt: '' };
+    });
+  });
+}
+/* One cropped picture, used for covers, thumbnails and the home photo. */
+function addCrop(file, name, aspect, outW, q) {
+  return loadBitmap(file).then(function (bm) {
+    var c = cropped(bm, aspect, outW);
+    return encode(c, q || 0.8).then(function (r) {
+      var path = 'assets/img/' + name + '-' + rand4() + '.' + r.ext;
+      pendingAdd(path, r.blob);
+      return { src: path, w: c.width, h: c.height };
+    });
+  });
+}
+function addVideo(file, prefix) {
+  if (file.size > VIDEO_MAX_MB * 1048576) {
+    return Promise.reject(new Error(file.name + ' is ' + mb(file.size) + '. Videos have to be under ' + VIDEO_MAX_MB + ' MB. Trim or compress it first.'));
+  }
+  return new Promise(function (res, rej) {
+    var u = URL.createObjectURL(file), v = document.createElement('video'), done = false;
+    v.muted = true; v.playsInline = true; v.preload = 'auto';
+    function finish(poster) {
+      if (done) { return; } done = true;
+      var ext = /\.webm$/i.test(file.name) ? 'webm' : 'mp4';
+      var base = prefix + '-' + nameBase(file) + '-' + rand4();
+      var item = { type: 'video', src: 'assets/video/' + base + '.' + ext, poster: '', w: v.videoWidth, h: v.videoHeight, cap: '' };
+      if (v.videoHeight > v.videoWidth) { item.portrait = true; }
+      pendingAdd(item.src, file);
+      if (poster) { item.poster = 'assets/img/poster-' + base + '.' + poster.ext; pendingAdd(item.poster, poster.blob); }
+      URL.revokeObjectURL(u);
+      res(item);
+    }
+    v.onerror = function () {
+      URL.revokeObjectURL(u);
+      rej(new Error('This browser cannot play ' + file.name + '. Export it as an MP4 (H.264) and try again.'));
+    };
+    v.onloadedmetadata = function () {
+      if (!v.videoWidth) { v.onerror(); return; }
+      v.currentTime = Math.min(1, (v.duration || 2) / 3);
+    };
+    v.onseeked = function () {
+      try {
+        var k = Math.min(1, 1280 / Math.max(v.videoWidth, v.videoHeight));
+        var c = draw(v, 0, 0, v.videoWidth, v.videoHeight, Math.round(v.videoWidth * k), Math.round(v.videoHeight * k));
+        encode(c, 0.78).then(finish, function () { finish(null); });
+      } catch (e) { finish(null); }
+    };
+    setTimeout(function () { if (v.videoWidth) { finish(null); } }, 6000);
+    v.src = u;
+  });
+}
+function addMediaFiles(files, prefix) {
+  var out = [], errs = [], chain = Promise.resolve();
+  [].slice.call(files).forEach(function (f, n) {
+    chain = chain.then(function () {
+      busy('Preparing file ' + (n + 1) + ' of ' + files.length);
+      var isVideo = /^video\//.test(f.type) || /\.(mp4|mov|webm|m4v)$/i.test(f.name);
+      return (isVideo ? addVideo(f, prefix) : addImage(f, prefix)).then(function (it) {
+        out.push(it);
+        if (isVideo && f.size > VIDEO_WARN_MB * 1048576) {
+          errs.push(f.name + ' is ' + mb(f.size) + '. It will work, but large videos load slowly for visitors.');
+        }
+      }, function (e) { errs.push(e.message); });
+    });
+  });
+  return chain.then(function () { busy(''); if (errs.length) { notice(errs.join('\n'), 'bad'); } return out; });
+}
+</script>
+<script>
+/* ============================================================== preview */
+var pvFrames, pvActive = 0, pvTimer = 0, pvHash = '', pvToken = 0;
+function selHash() {
+  var s = state.sel;
+  if (s.kind === 'about') { return 'about'; }
+  if (s.kind === 'project') { var p = state.content.projects[s.i]; return p && !p.hidden && p.slug ? p.slug : ''; }
+  return '';
+}
+function previewHtml() {
+  var html = SiteRender.buildPage(state.content, state.shell);
+  html = html.replace(/(src|poster|href)="(assets\/[^"]+)"/g, function (m, a, p) { return a + '="' + urlFor(p) + '"'; });
+  return html.replace('</head>', '<style>*,*::before,*::after{animation:none !important}.fan--draw path{stroke-dashoffset:0}.fan--draw text{opacity:1}</style></head>');
+}
+function layoutPreview() {
+  var box = $('#pv'), W = state.pvWidth, cw = box.clientWidth, ch = box.clientHeight;
+  var k = Math.min(1, cw / W);
+  pvFrames.forEach(function (f) {
+    f.style.width = W + 'px'; f.style.height = Math.ceil(ch / k) + 'px';
+    f.style.transform = 'scale(' + k + ')'; f.style.left = Math.max(0, (cw - W * k) / 2) + 'px';
+  });
+}
+function refreshPreview() {
+  clearTimeout(pvTimer);
+  if (!state.content || !state.shell) { return; }
+  var html;
+  try { html = previewHtml(); } catch (e) { return; }
+  var hash = selHash(), cur = pvFrames[pvActive], nxt = pvFrames[1 - pvActive], y = 0, mine = ++pvToken;
+  try { if (hash === pvHash && cur.contentWindow) { y = cur.contentWindow.pageYOffset || 0; } } catch (e) {}
+  var url = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+  nxt.onload = function () {
+    if (mine !== pvToken) { URL.revokeObjectURL(url); return; }
+    try { nxt.contentWindow.scrollTo(0, y); } catch (e) {}
+    nxt.style.visibility = 'visible'; cur.style.visibility = 'hidden';
+    pvActive = 1 - pvActive; pvHash = hash;
+    $('#pv-empty').hidden = true;
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  };
+  nxt.src = url + (hash ? '#' + hash : '');
+}
+function previewSoon() { clearTimeout(pvTimer); pvTimer = setTimeout(refreshPreview, 350); }
+function previewGo() {
+  var hash = selHash();
+  try {
+    var w = pvFrames[pvActive].contentWindow;
+    if (w && w.document && w.document.body && w.document.body.children.length) {
+      if (hash === pvHash) { return; }
+      w.location.hash = hash || 'home'; pvHash = hash; return;
+    }
+  } catch (e) {}
+  refreshPreview();
+}
+</script>
+<script>
+/* ============================================================== form building blocks */
+var uid = 0;
+function changed(structural) {
+  setStatus(); saveDraftSoon(); previewSoon(); renderSide();
+  if (structural) { renderForm(); }
+}
+function field(label, value, set, o) {
+  o = o || {};
+  var id = 'f' + (++uid), input;
+  if (o.rows) { input = h('textarea', { id: id, rows: o.rows, placeholder: o.placeholder }); }
+  else { input = h('input', { id: id, type: o.type || 'text', placeholder: o.placeholder }); }
+  input.value = value == null ? '' : value;
+  input.addEventListener('input', function () { set(input.value); changed(false); });
+  if (o.onblur) { input.addEventListener('blur', o.onblur); }
+  return h('div', { class: 'field' }, h('label', { for: id }, label), input, o.hint ? h('p', { class: 'hint' }, o.hint) : null);
+}
+function select(label, value, options, set, structural) {
+  var id = 'f' + (++uid), sel = h('select', { id: id });
+  options.forEach(function (op) { sel.appendChild(h('option', { value: op[0] }, op[1])); });
+  sel.value = value == null ? '' : value;
+  sel.addEventListener('change', function () { set(sel.value); changed(!!structural); });
+  return h('div', { class: 'field' }, h('label', { for: id }, label), sel);
+}
+function check(label, value, set, structural) {
+  var id = 'f' + (++uid), box = h('input', { id: id, type: 'checkbox', checked: !!value });
+  box.addEventListener('change', function () { set(box.checked); changed(!!structural); });
+  return h('label', { class: 'check', for: id }, box, label);
+}
+function group(title) {
+  var g = h('section', { class: 'group' }, h('h3', null, h('span', null, title)));
+  for (var i = 1; i < arguments.length; i++) { addKid(g, arguments[i]); }
+  return g;
+}
+function iconBtn(sym, label, run, disabled) {
+  return h('button', { class: 'ibtn', type: 'button', 'aria-label': label, title: label, disabled: disabled, onclick: run }, sym);
+}
+/* list of two-column rows, for facts and links */
+function pairs(arr, a, b, mk, even) {
+  var box = h('div');
+  arr.forEach(function (row, i) {
+    var ia = h('input', { type: 'text', id: 'f' + (++uid), 'aria-label': a + ' ' + (i + 1), placeholder: a, value: mk.get(row)[0] });
+    var ib = h('input', { type: 'text', id: 'f' + (++uid), 'aria-label': b + ' ' + (i + 1), placeholder: b, value: mk.get(row)[1] });
+    function up() { mk.set(row, ia.value, ib.value); changed(false); }
+    ia.addEventListener('input', up); ib.addEventListener('input', up);
+    box.appendChild(h('div', { class: 'rowin' + (even ? ' rowin--even' : '') }, ia, ib,
+      iconBtn('✕', 'Remove this row', function () { arr.splice(i, 1); changed(true); })));
+  });
+  box.appendChild(h('button', { class: 'sbtn', type: 'button', onclick: function () { arr.push(mk.make()); changed(true); } }, 'Add a row'));
+  return box;
+}
+var FACT = { get: function (r) { return r; }, set: function (r, a, b) { r[0] = a; r[1] = b; }, make: function () { return ['', '']; } };
+var LINK = { get: function (r) { return [r.label, r.href]; }, set: function (r, a, b) { r.label = a; r.href = b; }, make: function () { return { label: '', href: '' }; } };
+
+function filePick(label, accept, multiple, run, primary) {
+  var input = h('input', { type: 'file', accept: accept, multiple: multiple, 'aria-label': label, id: 'f' + (++uid) });
+  input.addEventListener('change', function () { if (input.files.length) { run(input.files); } input.value = ''; });
+  return h('label', { class: 'filebtn' }, input, h('span', { class: 'sbtn' + (primary ? ' sbtn--primary' : '') }, label));
+}
+function confirmBtn(label, run) {
+  var armed = false, b = h('button', { class: 'sbtn sbtn--danger', type: 'button' }, label);
+  b.addEventListener('click', function () {
+    if (armed) { run(); return; }
+    armed = true; b.textContent = 'Click again to confirm';
+    setTimeout(function () { armed = false; b.textContent = label; }, 3500);
+  });
+  return b;
+}
+</script>
+<script>
+/* ============================================================== sidebar */
+var dragFrom = -1;
+function renderSide() {
+  var side = $('#side'), c = state.content, y = side.scrollTop;
+  side.textContent = '';
+  function nav(label, sel, badge, drag) {
+    var on = state.sel.kind === sel.kind && (sel.kind !== 'project' || state.sel.i === sel.i);
+    var b = h('button', { class: 'nav', type: 'button', 'aria-current': on ? 'true' : null, onclick: function () { selectItem(sel); } },
+      h('span', null, label || 'Untitled project'), badge ? h('small', null, badge) : null);
+    if (drag) {
+      b.draggable = true;
+      b.addEventListener('dragstart', function (e) { dragFrom = sel.i; e.dataTransfer.effectAllowed = 'move'; });
+      b.addEventListener('dragover', function (e) { if (dragFrom > -1 && dragFrom !== sel.i) { e.preventDefault(); b.classList.add('is-over'); } });
+      b.addEventListener('dragleave', function () { b.classList.remove('is-over'); });
+      b.addEventListener('drop', function (e) { e.preventDefault(); b.classList.remove('is-over'); dropProject(dragFrom, sel.i); dragFrom = -1; });
+      b.addEventListener('dragend', function () { dragFrom = -1; });
+    }
+    return b;
+  }
+  side.appendChild(h('h2', null, 'Pages'));
+  side.appendChild(nav('Home and contact', { kind: 'home' }));
+  side.appendChild(nav('About', { kind: 'about' }));
+  [['Featured projects', true], ['More projects', false]].forEach(function (g) {
+    side.appendChild(h('h2', null, g[0]));
+    c.projects.forEach(function (p, i) {
+      if (!!p.featured !== g[1]) { return; }
+      side.appendChild(nav(p.title, { kind: 'project', i: i }, p.hidden ? 'Hidden' : '', true));
+    });
+  });
+  side.appendChild(h('button', { class: 'sbtn sbtn--primary add', type: 'button', onclick: addProject }, 'Add a project'));
+  side.appendChild(h('p', { class: 'hint', style: 'margin:10px 8px 0' }, 'Drag a project onto another one to change the order.'));
+  side.scrollTop = y;
+}
+function selectItem(sel) {
+  state.sel = sel; renderSide(); renderForm(); $('#form').scrollTop = 0; previewGo();
+}
+function dropProject(from, to) {
+  var ps = state.content.projects;
+  if (from < 0 || from === to || !ps[from] || !ps[to]) { return; }
+  var selected = state.sel.kind === 'project' ? ps[state.sel.i] : null;
+  var item = ps[from], target = ps[to];
+  ps.splice(from, 1);
+  item.featured = target.featured;
+  var at = ps.indexOf(target);
+  ps.splice(from < to ? at + 1 : at, 0, item);
+  if (selected) { state.sel.i = ps.indexOf(selected); }
+  changed(true);
+}
+function moveProject(i, d) {
+  var ps = state.content.projects, p = ps[i], j = i + d;
+  while (j >= 0 && j < ps.length && !!ps[j].featured !== !!p.featured) { j += d; }
+  if (j < 0 || j >= ps.length) { return; }
+  ps.splice(i, 1); ps.splice(j, 0, p);
+  state.sel.i = j; changed(true);
+}
+function addProject() {
+  var ps = state.content.projects, n = 1, slug = 'new-project';
+  while (ps.some(function (p) { return p.slug === slug; })) { n++; slug = 'new-project-' + n; }
+  ps.push({
+    slug: slug, title: 'New project', kicker: '', year: String(new Date().getFullYear()), featured: false, size: '', hidden: true,
+    pillars: [], card: '', summary: '', facts: [['Year', String(new Date().getFullYear())], ['Type', ''], ['My role', '']], tags: [],
+    numbered: true, related: null, cover: null, thumb: null, lead: null, strip: [],
+    steps: [{ title: 'Problem', body: [], bullets: [], links: [], note: '', media: [] }]
+  });
+  state.autoSlug = slug;
+  selectItem({ kind: 'project', i: ps.length - 1 });
+  changed(false);
+}
+</script>
+<script>
+/* ============================================================== forms */
+function renderForm() {
+  var form = $('#form'), y = form.scrollTop, s = state.sel;
+  uid = 0; form.textContent = '';
+  if (s.kind === 'home') { formHome(form); }
+  else if (s.kind === 'about') { formAbout(form); }
+  else if (state.content.projects[s.i]) { formProject(form, state.content.projects[s.i], s.i); }
+  form.scrollTop = y;
+}
+
+function formHome(form) {
+  var c = state.content, site = c.site;
+  form.appendChild(h('h2', null, 'Home and contact'));
+  form.appendChild(h('p', { class: 'sub' }, 'The top of the home page and the contact block at the bottom of every page.'));
+  form.appendChild(group('Headline',
+    field('Name', site.name, function (v) { site.name = v; }),
+    field('Tagline', site.tagline, function (v) { site.tagline = v; }),
+    field('Intro sentence', site.lede, function (v) { site.lede = v; }, { rows: 2 })));
+
+  var photo = h('img', { class: 'thumb thumb--portrait', alt: '', src: site.photo ? urlFor(site.photo.src) : null });
+  form.appendChild(group('Your photo',
+    h('div', { class: 'coverrow' }, photo, h('div', null,
+      h('div', { class: 'tools' },
+        filePick(site.photo ? 'Replace photo' : 'Choose photo', 'image/*', false, function (files) {
+          busy('Preparing photo');
+          addCrop(files[0], 'portrait', 4 / 5, 800, 0.84).then(function (r) { site.photo = r; busy(''); changed(true); },
+            function (e) { busy(''); notice(e.message, 'bad'); });
+        }, true),
+        site.photo ? h('button', { class: 'sbtn', type: 'button', onclick: function () { site.photo = null; changed(true); } }, 'Remove') : null),
+      h('p', { class: 'hint' }, 'Cropped to a 4:5 portrait from the center of the picture.'),
+      field('Handwritten caption under the photo', site.photoCaption, function (v) { site.photoCaption = v; })))));
+
+  form.appendChild(group('Contact',
+    field('Email', site.email, function (v) { site.email = v.trim(); }, { type: 'email' }),
+    field('LinkedIn address', site.linkedin, function (v) { site.linkedin = v.trim(); }, { type: 'url' }),
+    field('Line under your name in the footer', site.role, function (v) { site.role = v; })));
+
+  form.appendChild(group('Resume PDF',
+    h('p', { style: 'margin:0 0 10px' }, site.resume ? 'Current file: ' + site.resume.split('/').pop() : 'No resume uploaded yet. The download button stays switched off until you add one.'),
+    h('div', { class: 'tools' },
+      filePick(site.resume ? 'Replace PDF' : 'Choose PDF', 'application/pdf,.pdf', false, function (files) {
+        var f = files[0];
+        if (!/\.pdf$/i.test(f.name)) { notice('The resume has to be a PDF file.', 'bad'); return; }
+        var path = 'assets/resume/' + (site.name.trim().replace(/[^A-Za-z0-9]+/g, '-') || 'Resume') + '-Resume.pdf';
+        pendingAdd(path, f); site.resume = path; changed(true);
+      }, true),
+      site.resume ? h('button', { class: 'sbtn', type: 'button', onclick: function () { site.resume = ''; changed(true); } }, 'Remove') : null)));
+
+  var pl = group('The three skill areas');
+  c.pillars.forEach(function (p) {
+    pl.appendChild(h('div', { class: 'two' },
+      field('Label', p.label, function (v) { p.label = v; }),
+      field('One line about it', p.text, function (v) { p.text = v; })));
+  });
+  form.appendChild(pl);
+}
+
+function formAbout(form) {
+  var ab = state.content.about;
+  form.appendChild(h('h2', null, 'About'));
+  form.appendChild(h('p', { class: 'sub' }, 'Your bio, work experience and skills.'));
+  form.appendChild(group('Intro',
+    field('Paragraphs', ab.intro.join('\n\n'), function (v) { ab.intro = paras(v); }, { rows: 7, hint: 'Leave an empty line between paragraphs.' })));
+  form.appendChild(group('Quick facts', pairs(ab.facts, 'Label', 'Value', FACT)));
+
+  var ex = group('Experience');
+  ab.jobs.forEach(function (job, ji) {
+    var box = h('div', { class: 'step' },
+      h('div', { class: 'step__head' },
+        h('input', { type: 'text', id: 'f' + (++uid), 'aria-label': 'Company name', placeholder: 'Company', value: job.company,
+          oninput: function (e) { job.company = e.target.value; changed(false); } }),
+        iconBtn('↑', 'Move this company up', function () { move(ab.jobs, ji, -1); changed(true); }, ji === 0),
+        iconBtn('↓', 'Move this company down', function () { move(ab.jobs, ji, 1); changed(true); }, ji === ab.jobs.length - 1),
+        iconBtn('✕', 'Remove this company', function () { ab.jobs.splice(ji, 1); changed(true); })));
+    var body = h('div', { class: 'step__body' });
+    job.roles.forEach(function (role, ri) {
+      var r = h('div', { class: 'role' },
+        h('div', { class: 'two' },
+          field('Job title', role.title, function (v) { role.title = v; }),
+          field('Place and dates', role.meta, function (v) { role.meta = v; })));
+      role.stories.forEach(function (st, si) {
+        r.appendChild(h('div', { class: 'story' },
+          field('Challenge story ' + (si + 1), st.text, function (v) { st.text = v; }, { rows: 3 }),
+          h('div', { class: 'tools' },
+            check('Show as a yellow draft placeholder', st.draft, function (v) { st.draft = v; }),
+            h('span', { style: 'flex:1' }),
+            iconBtn('✕', 'Remove this story', function () { role.stories.splice(si, 1); changed(true); }))));
+      });
+      r.appendChild(h('div', { class: 'tools' },
+        h('button', { class: 'sbtn', type: 'button', onclick: function () { role.stories.push({ text: '', draft: false }); changed(true); } }, 'Add a story'),
+        h('button', { class: 'sbtn sbtn--danger', type: 'button', onclick: function () { job.roles.splice(ri, 1); changed(true); } }, 'Remove this job title')));
+      body.appendChild(r);
+    });
+    body.appendChild(h('button', { class: 'sbtn', type: 'button', onclick: function () { job.roles.push({ title: '', meta: '', stories: [] }); changed(true); } }, 'Add a job title at this company'));
+    box.appendChild(body); ex.appendChild(box);
+  });
+  ex.appendChild(h('button', { class: 'sbtn', type: 'button', onclick: function () { ab.jobs.push({ company: '', roles: [{ title: '', meta: '', stories: [] }] }); changed(true); } }, 'Add a company'));
+  form.appendChild(ex);
+
+  var sk = group('Skills');
+  ab.skills.forEach(function (col, i) {
+    sk.appendChild(h('div', { class: 'story' },
+      field('Column heading', col.title, function (v) { col.title = v; }),
+      field('Skills, one per line', col.items.join('\n'), function (v) { col.items = lines(v); }, { rows: 5 }),
+      h('button', { class: 'sbtn sbtn--danger', type: 'button', onclick: function () { ab.skills.splice(i, 1); changed(true); } }, 'Remove this column')));
+  });
+  sk.appendChild(h('button', { class: 'sbtn', type: 'button', onclick: function () { ab.skills.push({ title: '', items: [] }); changed(true); } }, 'Add a column'));
+  form.appendChild(sk);
+}
+
+var RATIOS = [['', 'Original shape'], ['4/3', 'Landscape 4:3'], ['3/2', 'Landscape 3:2'], ['16/9', 'Wide 16:9'], ['1/1', 'Square'], ['3/4', 'Tall 3:4']];
+
+function formProject(form, p, i) {
+  var c = state.content, ps = c.projects;
+  var head = h('div', { class: 'tools', style: 'margin-bottom:6px' },
+    h('h2', { style: 'flex:1;margin:0' }, p.title || 'Untitled project'),
+    iconBtn('↑', 'Move earlier in the list', function () { moveProject(i, -1); }),
+    iconBtn('↓', 'Move later in the list', function () { moveProject(i, 1); }));
+  form.appendChild(head);
+  form.appendChild(h('p', { class: 'sub' }, p.hidden ? 'Hidden. Visitors cannot see this project until you untick "Hide from the site".' : 'Visitors can see this project.'));
+
+  var slugField = field('Link name', p.slug, function (v) {
+    var old = p.slug; p.slug = slugify(v); state.autoSlug = '';
+    ps.forEach(function (q) { if (q.related && q.related.slug === old) { q.related.slug = p.slug; } });
+  }, { hint: 'The page address ends in #' + p.slug + '. Lowercase letters, numbers and hyphens. Changing it breaks links you already shared.' });
+  form.appendChild(group('Basics',
+    field('Title', p.title, function (v) {
+      p.title = v;
+      head.firstChild.textContent = v || 'Untitled project';
+      if (state.autoSlug && state.autoSlug === p.slug) {
+        var s = slugify(v) || 'new-project', n = 1, base = s;
+        while (ps.some(function (q) { return q !== p && q.slug === s; })) { n++; s = base + '-' + n; }
+        p.slug = s; state.autoSlug = s;
+        $('input', slugField).value = s;
+      }
+    }),
+    h('div', { class: 'two' },
+      field('Short label', p.kicker, function (v) { p.kicker = v; }, { placeholder: 'Gym wearable' }),
+      field('Year', p.year, function (v) { p.year = v; })),
+    slugField,
+    h('div', { class: 'two' },
+      select('Where it shows on the home page', p.featured ? '1' : '', [['1', 'Featured, as a big card'], ['', 'More projects, as a list row']], function (v) { p.featured = !!v; }, true),
+      p.featured ? select('Card size', p.size || '', [['lead', 'Full width'], ['', 'Half width'], ['third', 'One third']], function (v) { p.size = v; }) : null),
+    h('div', { class: 'field' }, h('span', { class: 'lbl' }, 'Skill areas this project shows'),
+      h('div', { class: 'checks' }, c.pillars.map(function (pl) {
+        return check(pl.label, p.pillars.indexOf(pl.key) > -1, function (v) {
+          p.pillars = c.pillars.map(function (x) { return x.key; }).filter(function (k) { return k === pl.key ? v : p.pillars.indexOf(k) > -1; });
+        });
+      }))),
+    check('Hide from the site', p.hidden, function (v) { p.hidden = v; }, true)));
+
+  form.appendChild(group('Summary text',
+    field('On the home page card', p.card, function (v) { p.card = v; }, { rows: 2, hint: 'One or two sentences.' }),
+    field('At the top of the project page', p.summary, function (v) { p.summary = v; }, { rows: 3 }),
+    field('Tags', p.tags.join(', '), function (v) { p.tags = v.split(',').map(function (x) { return x.trim(); }).filter(Boolean); }, { hint: 'Separate with commas. The home page card shows the first four.' })));
+
+  var cov = h('img', { class: 'thumb', alt: '', src: p.cover ? urlFor(p.cover.src) : null });
+  form.appendChild(group('Cover photo',
+    h('div', { class: 'coverrow' }, cov, h('div', null,
+      h('div', { class: 'tools' },
+        filePick(p.cover ? 'Replace cover' : 'Choose cover', 'image/*', false, function (files) {
+          var f = files[0], alt = p.cover ? p.cover.alt : '';
+          busy('Preparing cover');
+          addCrop(f, 'cover-' + p.slug, 4 / 3, 960, 0.8).then(function (r) {
+            r.alt = alt; p.cover = r;
+            return addCrop(f, 'thumb-' + p.slug, 4 / 3, 240, 0.78);
+          }).then(function (t) {
+            p.thumb = t;
+            return p.size === 'lead' && p.featured ? addCrop(f, 'lead-' + p.slug, 16 / 10, 1400, 0.8) : null;
+          }).then(function (l) {
+            p.lead = l; p.strip = p.strip || [];
+            busy(''); changed(true);
+          }, function (e) { busy(''); notice(e.message, 'bad'); });
+        }, true),
+        p.cover ? h('button', { class: 'sbtn', type: 'button', onclick: function () { p.cover = null; p.thumb = null; p.lead = null; changed(true); } }, 'Remove') : null),
+      h('p', { class: 'hint' }, 'Cropped to 4:3 from the center. Used on the home page and at the top of the project page.'),
+      p.cover ? field('Describe the photo', p.cover.alt, function (v) { p.cover.alt = v; }, { hint: 'For screen readers and search engines.' }) : null))));
+
+  form.appendChild(group('Quick facts table', pairs(p.facts, 'Label', 'Value', FACT)));
+
+  var others = [['', 'None']].concat(ps.filter(function (q) { return q !== p; }).map(function (q) { return [q.slug, q.title]; }));
+  form.appendChild(group('Link to a related project',
+    select('Project', p.related ? p.related.slug : '', others, function (v) {
+      if (!v) { p.related = null; } else { p.related = { slug: v, label: (p.related && p.related.label) || 'See also: ' + ps.filter(function (q) { return q.slug === v; })[0].title }; }
+    }, true),
+    p.related ? field('Link text', p.related.label, function (v) { p.related.label = v; }) : null));
+
+  var st = group('Sections', check('Number the sections (01, 02, 03)', p.numbered !== false, function (v) { p.numbered = v; }),
+    h('p', { class: 'hint', style: 'margin:6px 0 12px' }, 'Each section is one step of the story, for example Problem, Approach, Testing, Result.'));
+  p.steps.forEach(function (s, k) { st.appendChild(formStep(p, s, k)); });
+  st.appendChild(h('button', { class: 'sbtn sbtn--primary', type: 'button', onclick: function () {
+    p.steps.push({ title: 'New section', body: [], bullets: [], links: [], note: '', media: [] }); changed(true);
+  } }, 'Add a section'));
+  form.appendChild(st);
+
+  form.appendChild(group('Delete', h('p', { style: 'margin:0 0 10px' }, 'Removes this project from the site the next time you publish.'),
+    confirmBtn('Delete this project', function () {
+      ps.forEach(function (q) { if (q.related && q.related.slug === p.slug) { q.related = null; } });
+      ps.splice(i, 1); state.sel = { kind: 'home' }; changed(true); previewGo();
+    })));
+}
+
+function formStep(p, s, k) {
+  var box = h('div', { class: 'step' },
+    h('div', { class: 'step__head' },
+      h('b', null, String(k + 1)),
+      h('input', { type: 'text', id: 'f' + (++uid), 'aria-label': 'Section ' + (k + 1) + ' title', value: s.title, placeholder: 'Section title',
+        oninput: function (e) { s.title = e.target.value; changed(false); } }),
+      iconBtn('↑', 'Move section up', function () { move(p.steps, k, -1); changed(true); }, k === 0),
+      iconBtn('↓', 'Move section down', function () { move(p.steps, k, 1); changed(true); }, k === p.steps.length - 1),
+      iconBtn('✕', 'Delete section', function () { p.steps.splice(k, 1); changed(true); })));
+  var body = h('div', { class: 'step__body' },
+    field('Text', (s.body || []).join('\n\n'), function (v) { s.body = paras(v); }, { rows: 5, hint: 'Leave an empty line between paragraphs.' }),
+    field('Bullet points, one per line', (s.bullets || []).join('\n'), function (v) { s.bullets = lines(v); }, { rows: 3 }),
+    field('Handwritten note', s.note, function (v) { s.note = v; }, { placeholder: 'Lesson: ...', hint: 'Optional. Shows in handwriting under the text.' }));
+  s.links = s.links || []; s.media = s.media || [];
+  if (s.links.length) {
+    body.appendChild(h('div', { class: 'field' }, h('span', { class: 'lbl' }, 'Links'), pairs(s.links, 'Link text', 'Address (https://...)', LINK, true)));
+  } else {
+    body.appendChild(h('div', { class: 'field' }, h('button', { class: 'sbtn', type: 'button', onclick: function () { s.links.push(LINK.make()); changed(true); } }, 'Add a link')));
+  }
+  body.appendChild(h('span', { class: 'lbl' }, 'Photos and videos'));
+  s.media.forEach(function (g, gi) { body.appendChild(formMediaRow(p, s, g, gi)); });
+  body.appendChild(filePick(s.media.length ? 'Add another row of photos or videos' : 'Add photos or videos', 'image/*,video/mp4,video/webm,video/quicktime,.mov,.m4v', true, function (files) {
+    addMediaFiles(files, p.slug || 'project').then(function (items) {
+      if (!items.length) { return; }
+      s.media.push({ cols: Math.min(items.length, 3), ratio: '', wide: false, items: items });
+      changed(true);
+    });
+  }));
+  box.appendChild(body);
+  return box;
+}
+
+function formMediaRow(p, s, g, gi) {
+  var ratios = RATIOS.slice();
+  if (g.ratio && !ratios.some(function (r) { return r[0] === g.ratio; })) { ratios.push([g.ratio, 'Custom ' + g.ratio.replace('/', ':')]); }
+  var row = h('div', { class: 'mrow' },
+    h('div', { class: 'mrow__top' },
+      select('Per row', String(g.cols || 1), [['1', '1'], ['2', '2'], ['3', '3'], ['4', '4']], function (v) { g.cols = +v; }),
+      select('Crop shape', g.ratio || '', ratios, function (v) { g.ratio = v; }),
+      g.items.length === 1 ? check('Full width under the text', g.wide, function (v) { g.wide = v; }) : null,
+      h('span', { style: 'flex:1' }),
+      iconBtn('↑', 'Move this row up', function () { move(s.media, gi, -1); changed(true); }, gi === 0),
+      iconBtn('↓', 'Move this row down', function () { move(s.media, gi, 1); changed(true); }, gi === s.media.length - 1),
+      iconBtn('✕', 'Remove this whole row', function () { s.media.splice(gi, 1); changed(true); })));
+  g.items.forEach(function (it, ii) {
+    var isImg = it.type === 'img', thumbSrc = isImg ? urlFor(it.src) : (it.poster ? urlFor(it.poster) : null);
+    row.appendChild(h('div', { class: 'mitem' },
+      h('img', { alt: '', src: thumbSrc }),
+      h('div', null,
+        field(isImg ? 'Caption' : 'Video caption', it.cap, function (v) { it.cap = v; }),
+        isImg ? field('Describe the photo', it.alt, function (v) { it.alt = v; }) : null,
+        h('div', { class: 'tools' },
+          isImg ? check('Show the whole image, no cropping', it.fit === 'contain', function (v) { if (v) { it.fit = 'contain'; } else { delete it.fit; } }) : null,
+          isImg ? check('Phone screenshot', it.phone, function (v) { if (v) { it.phone = true; } else { delete it.phone; } }) : null,
+          !isImg ? check('Play silently on a loop', it.loop, function (v) { if (v) { it.loop = true; } else { delete it.loop; } }) : null,
+          h('span', { style: 'flex:1' }),
+          iconBtn('←', 'Move earlier in the row', function () { move(g.items, ii, -1); changed(true); }, ii === 0),
+          iconBtn('→', 'Move later in the row', function () { move(g.items, ii, 1); changed(true); }, ii === g.items.length - 1),
+          iconBtn('✕', 'Remove', function () { g.items.splice(ii, 1); if (!g.items.length) { s.media.splice(gi, 1); } changed(true); })))));
+  });
+  row.appendChild(filePick('Add to this row', 'image/*,video/mp4,video/webm,video/quicktime,.mov,.m4v', true, function (files) {
+    addMediaFiles(files, p.slug || 'project').then(function (items) { [].push.apply(g.items, items); if (items.length) { changed(true); } });
+  }));
+  return row;
+}
+</script>
+<script>
+/* ============================================================== GitHub */
+function gh(path, opts) {
+  opts = opts || {};
+  var headers = { 'Accept': opts.raw ? 'application/vnd.github.raw+json' : 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+  if (state.token) { headers.Authorization = 'Bearer ' + state.token; }
+  if (opts.body) { headers['Content-Type'] = 'application/json'; }
+  return fetch(API + '/repos/' + OWNER + '/' + REPO + path, { method: opts.method || 'GET', headers: headers, body: opts.body ? JSON.stringify(opts.body) : undefined, cache: 'no-store' })
+    .then(function (r) {
+      if (r.ok) { return opts.raw ? r.text() : r.json(); }
+      return r.text().then(function (txt) {
+        var msg = '';
+        try { msg = JSON.parse(txt).message || ''; } catch (e) {}
+        var err = new Error(
+          r.status === 401 ? 'GitHub did not accept the access key. It may have expired. Open "GitHub connection" and paste a new one.'
+          : r.status === 403 || r.status === 404 ? 'The access key cannot reach ' + REPO + '. Check that it includes this repository with Contents set to Read and write.' + (msg ? ' (GitHub said: ' + msg + ')' : '')
+          : 'GitHub returned an error (' + r.status + ').' + (msg ? ' ' + msg : ''));
+        err.status = r.status; throw err;
+      });
+    }, function () { throw new Error('Could not reach GitHub. Check your internet connection and try again.'); });
+}
+function blobToBase64(blob) {
+  return new Promise(function (res, rej) {
+    var fr = new FileReader();
+    fr.onload = function () { var s = String(fr.result); res(s.slice(s.indexOf(',') + 1)); };
+    fr.onerror = function () { rej(new Error('Could not read a file that was waiting to upload.')); };
+    fr.readAsDataURL(blob);
+  });
+}
+function headSha() { return gh('/git/ref/heads/' + BRANCH).then(function (r) { return r.object.sha; }); }
+
+/* The files a publish or a zip export contains. */
+function outputFiles() {
+  var c = state.content, errs = SiteRender.check(c);
+  var refs = SiteRender.assetRefs(c);
+  var missing = refs.filter(function (p) { return !state.pending.has(p) && state.baseRefs.indexOf(p) < 0; });
+  if (missing.length) { errs.push('These files were added in an earlier session and are no longer in this browser. Add them again: ' + missing.join(', ')); }
+  if (errs.length) { var e = new Error(errs.join('\n')); e.list = true; throw e; }
+  c.site.rev = monthYear();
+  var html = SiteRender.buildPage(c, state.shell);
+  return {
+    refs: refs,
+    text: [{ path: 'content.json', text: JSON.stringify(c, null, 1) + '\n' }, { path: 'index.html', text: html }],
+    binary: refs.filter(function (p) { return state.pending.has(p); }).map(function (p) { return { path: p, blob: state.pending.get(p) }; }),
+    remove: state.baseRefs.filter(function (p) { return refs.indexOf(p) < 0; })
+  };
+}
+
+function publish() {
+  if (state.busy) { return; }
+  if (!state.token) { openConnect('Paste an access key first. Then press Publish again.'); return; }
+  clearNotices();
+  var out;
+  try { out = outputFiles(); } catch (e) { notice(e.message, 'bad'); setStatus(); return; }
+  if (!isDirty() && !out.binary.length) { notice('Nothing has changed since the last publish.', ''); return; }
+  var parent, tree = [];
+  busy('Publishing: checking GitHub');
+  headSha().then(function (sha) {
+    if (state.baseSha && sha !== state.baseSha) {
+      var e = new Error('The site on GitHub changed after you opened the editor, so publishing now could undo that change.\nReload the editor. Your edits are saved in this browser and will be offered back to you.');
+      e.reload = true; throw e;
+    }
+    parent = sha;
+    return gh('/git/commits/' + sha);
+  }).then(function (commit) {
+    var base = commit.tree.sha, chain = Promise.resolve();
+    out.binary.forEach(function (f, n) {
+      chain = chain.then(function () {
+        busy('Publishing: uploading file ' + (n + 1) + ' of ' + out.binary.length);
+        return blobToBase64(f.blob).then(function (b64) { return gh('/git/blobs', { method: 'POST', body: { content: b64, encoding: 'base64' } }); })
+          .then(function (b) { tree.push({ path: f.path, mode: '100644', type: 'blob', sha: b.sha }); });
+      });
+    });
+    return chain.then(function () {
+      busy('Publishing: saving the pages');
+      out.text.forEach(function (f) { tree.push({ path: f.path, mode: '100644', type: 'blob', content: f.text }); });
+      out.remove.forEach(function (p) { tree.push({ path: p, mode: '100644', type: 'blob', sha: null }); });
+      return gh('/git/trees', { method: 'POST', body: { base_tree: base, tree: tree } });
+    });
+  }).then(function (t) {
+    return gh('/git/commits', { method: 'POST', body: { message: 'Site update from the editor', tree: t.sha, parents: [parent] } });
+  }).then(function (commit) {
+    return gh('/git/refs/heads/' + BRANCH, { method: 'PATCH', body: { sha: commit.sha } }).then(function () { return commit.sha; });
+  }).then(function (sha) {
+    state.baseSha = sha; state.baseRefs = out.refs; state.original = JSON.stringify(state.content);
+    pendingPublished(); dropDraft(); busy('');
+    notice('Published. The live site updates in about a minute: ' + SITE_ROOT, 'good');
+    renderForm(); refreshPreview();
+  }).catch(function (e) {
+    busy('');
+    notice(e.message, 'bad', e.reload ? [{ label: 'Reload the editor', run: function () { saveNow(); location.reload(); } }] : []);
+  });
+}
+function saveNow() { try { if (isDirty()) { localStorage.setItem(KEY_DRAFT, JSON.stringify({ at: Date.now(), content: state.content })); } } catch (e) {} }
+</script>
+<script>
+/* ============================================================== zip export */
+var CRC = (function () { var t = [], n, c, k; for (n = 0; n < 256; n++) { c = n; for (k = 0; k < 8; k++) { c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; } t[n] = c >>> 0; } return t; })();
+function crc32(u8) { var c = 0xFFFFFFFF; for (var i = 0; i < u8.length; i++) { c = CRC[(c ^ u8[i]) & 255] ^ (c >>> 8); } return (c ^ 0xFFFFFFFF) >>> 0; }
+function makeZip(files) {
+  var enc = new TextEncoder();
+  return Promise.all(files.map(function (f) { return f.blob.arrayBuffer(); })).then(function (bufs) {
+    var parts = [], central = [], offset = 0;
+    files.forEach(function (f, i) {
+      var data = new Uint8Array(bufs[i]), name = enc.encode(f.name), crc = crc32(data);
+      var lh = new DataView(new ArrayBuffer(30));
+      lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(12, 0x21, true);
+      lh.setUint32(14, crc, true); lh.setUint32(18, data.length, true); lh.setUint32(22, data.length, true); lh.setUint16(26, name.length, true);
+      parts.push(lh.buffer, name, data);
+      var ch = new DataView(new ArrayBuffer(46));
+      ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(14, 0x21, true);
+      ch.setUint32(16, crc, true); ch.setUint32(20, data.length, true); ch.setUint32(24, data.length, true); ch.setUint16(28, name.length, true); ch.setUint32(42, offset, true);
+      central.push(ch.buffer, name);
+      offset += 30 + name.length + data.length;
+    });
+    var cdSize = central.reduce(function (n, p) { return n + p.byteLength; }, 0);
+    var end = new DataView(new ArrayBuffer(22));
+    end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true); end.setUint32(12, cdSize, true); end.setUint32(16, offset, true);
+    return new Blob(parts.concat(central, [end.buffer]), { type: 'application/zip' });
+  });
+}
+function downloadZip() {
+  if (state.busy) { return; }
+  var out;
+  try { out = outputFiles(); } catch (e) { notice(e.message, 'bad'); return; }
+  busy('Building the zip');
+  var how = 'How to put these files on the live site by hand\n\n' +
+    '1. Open https://github.com/' + OWNER + '/' + REPO + ' and click Add file, then Upload files.\n' +
+    '2. Unzip this download. Drag everything inside it (index.html, content.json and the assets folder if there is one) onto the upload page.\n' +
+    '3. Click Commit changes. The site updates in about a minute.\n' +
+    (out.remove.length ? '\nThese files are no longer used and can be deleted from the repository:\n' + out.remove.join('\n') + '\n' : '');
+  var files = out.text.map(function (f) { return { name: f.path, blob: new Blob([f.text]) }; })
+    .concat(out.binary.map(function (f) { return { name: f.path, blob: f.blob }; }))
+    .concat([{ name: 'HOW-TO-UPLOAD.txt', blob: new Blob([how]) }]);
+  makeZip(files).then(function (zip) {
+    var a = h('a', { href: URL.createObjectURL(zip), download: 'site-update.zip' });
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
+    busy('');
+    notice('Downloaded site-update.zip with ' + files.length + ' files. Open HOW-TO-UPLOAD.txt inside it for the steps.', 'good');
+  }, function (e) { busy(''); notice(e.message, 'bad'); });
+}
+</script>
+<script>
+/* ============================================================== connection dialog */
+function openConnect(msg) {
+  $('#dlg-owner').textContent = OWNER; $('#dlg-repo').textContent = REPO;
+  $('#token-input').value = state.token || '';
+  var m = $('#token-msg'); m.className = 'dlg__msg'; m.textContent = msg || (state.token ? 'A key is saved in this browser.' : '');
+  $('#token-forget').hidden = !state.token;
+  $('#dlg-connect').showModal();
+}
+function testToken() {
+  var m = $('#token-msg'), v = $('#token-input').value.trim();
+  if (!v) { m.className = 'dlg__msg err'; m.textContent = 'Paste the key first.'; return; }
+  var old = state.token; state.token = v;
+  m.className = 'dlg__msg'; m.textContent = 'Testing';
+  gh('').then(function (repo) {
+    if (repo.permissions && repo.permissions.push === false) {
+      throw new Error('The key can read the repository but cannot write to it. Set Contents to Read and write.');
+    }
+    try { localStorage.setItem(KEY_TOKEN, v); } catch (e) {}
+    m.className = 'dlg__msg ok'; m.textContent = 'Connected. You can publish from this browser now.';
+    $('#token-forget').hidden = false;
+    return syncBase();
+  }).catch(function (e) { state.token = old; m.className = 'dlg__msg err'; m.textContent = e.message; });
+}
+/* After connecting, make sure the editor is working from the newest version on GitHub. */
+function syncBase() {
+  return Promise.all([headSha(), gh('/contents/content.json?ref=' + BRANCH, { raw: true })]).then(function (r) {
+    var fresh = JSON.stringify(JSON.parse(r[1]));
+    if (fresh === state.original) { state.baseSha = r[0]; return; }
+    if (!isDirty()) { adopt(JSON.parse(r[1])); state.baseSha = r[0]; return; }
+    notice('GitHub has a newer version of the site than the one this editor loaded. Reload the editor before publishing. Your edits are saved in this browser.', 'bad',
+      [{ label: 'Reload the editor', run: function () { saveNow(); location.reload(); } }]);
+  });
+}
+function adopt(content) {
+  state.content = content; state.original = JSON.stringify(content); state.baseRefs = SiteRender.assetRefs(content);
+  if (state.sel.kind === 'project' && !content.projects[state.sel.i]) { state.sel = { kind: 'home' }; }
+  renderSide(); renderForm(); setStatus(); refreshPreview();
+}
+</script>
+<script>
+/* ============================================================== start */
+function loadScript(src) {
+  return new Promise(function (res, rej) {
+    var s = document.createElement('script'); s.src = src; s.onload = res;
+    s.onerror = function () { rej(new Error('Could not load ' + src)); };
+    document.head.appendChild(s);
+  });
+}
+function getText(url) {
+  return fetch(url, { cache: 'no-store' }).then(function (r) {
+    if (!r.ok) { throw new Error('Could not load ' + url.split('?')[0] + ' (' + r.status + ').'); }
+    return r.text();
+  });
+}
+function start() {
+  var bust = '?t=' + Date.now();
+  pvFrames = [$('#pv-a'), $('#pv-b')];
+  try { state.token = localStorage.getItem(KEY_TOKEN) || ''; } catch (e) {}
+  busy('Loading');
+  var contentP = state.token
+    ? Promise.all([gh('/contents/content.json?ref=' + BRANCH, { raw: true }), headSha()]).then(function (r) { state.baseSha = r[1]; return r[0]; })
+        .catch(function (e) { notice(e.message + '\nShowing the published version of the site for now.', 'bad'); return getText('../content.json' + bust); })
+    : getText('../content.json' + bust);
+  Promise.all([loadScript('render.js' + bust), getText('shell.html' + bust), contentP, pendingLoad()]).then(function (r) {
+    state.shell = r[1];
+    var content = JSON.parse(r[2]);
+    state.content = content; state.original = JSON.stringify(content); state.baseRefs = SiteRender.assetRefs(content);
+    busy('');
+    var draft = readDraft();
+    if (draft && draft.content && JSON.stringify(draft.content) !== state.original) {
+      var when = new Date(draft.at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+      notice('You have edits from ' + when + ' that were never published.', '', [
+        { label: 'Bring them back', run: function () { state.content = draft.content; renderSide(); renderForm(); setStatus(); refreshPreview(); } },
+        { label: 'Throw them away', run: function () { dropDraft(); pendingClear(); } }]);
+    } else { dropDraft(); pendingClear(); }
+    renderSide(); renderForm(); setStatus(); layoutPreview(); refreshPreview();
+    if (!state.token) { notice('You can edit and preview right away. To publish, connect to GitHub once with an access key.', '', [{ label: 'Connect to GitHub', run: function () { openConnect(); } }]); }
+  }).catch(function (e) { busy(''); notice('The editor could not start. ' + e.message, 'bad'); });
+
+  $('#btn-publish').addEventListener('click', publish);
+  $('#btn-zip').addEventListener('click', downloadZip);
+  $('#btn-connect').addEventListener('click', function () { openConnect(); });
+  $('#btn-discard').addEventListener('click', function () {
+    var b = $('#btn-discard');
+    if (b.dataset.armed) {
+      delete b.dataset.armed; b.textContent = 'Discard changes';
+      dropDraft(); pendingClear(); adopt(JSON.parse(state.original));
+      return;
+    }
+    b.dataset.armed = '1'; b.textContent = 'Click again to discard';
+    setTimeout(function () { delete b.dataset.armed; b.textContent = 'Discard changes'; }, 3500);
+  });
+  $('#token-save').addEventListener('click', testToken);
+  $('#token-cancel').addEventListener('click', function () { $('#dlg-connect').close(); });
+  $('#token-forget').addEventListener('click', function () {
+    state.token = ''; state.baseSha = '';
+    try { localStorage.removeItem(KEY_TOKEN); } catch (e) {}
+    $('#token-input').value = ''; $('#token-forget').hidden = true;
+    var m = $('#token-msg'); m.className = 'dlg__msg'; m.textContent = 'The key was removed from this browser.';
+  });
+  function pvSize(w) {
+    state.pvWidth = w;
+    $('#pv-desktop').setAttribute('aria-pressed', String(w === 1280)); $('#pv-phone').setAttribute('aria-pressed', String(w === 390));
+    layoutPreview();
+  }
+  $('#pv-desktop').addEventListener('click', function () { pvSize(1280); });
+  $('#pv-phone').addEventListener('click', function () { pvSize(390); });
+  if (window.ResizeObserver) { new ResizeObserver(layoutPreview).observe($('#pv')); } else { window.addEventListener('resize', layoutPreview); }
+  window.addEventListener('beforeunload', function (e) { saveNow(); if (isDirty()) { e.preventDefault(); e.returnValue = ''; } });
+}
+start();
+</script>
+</body>
+</html>

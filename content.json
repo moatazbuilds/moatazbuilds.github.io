@@ -1,0 +1,2616 @@
+{
+ "version": 1,
+ "site": {
+  "name": "Moataz Sayed",
+  "role": "Mechanical engineer",
+  "tagline": "Engineering done right.",
+  "lede": "Mechanical engineer at Boston University. I design the part, build the board, and test until it works.",
+  "email": "mmsayed@bu.edu",
+  "linkedin": "https://www.linkedin.com/in/moataz-sayed-443882280/",
+  "resume": "",
+  "photo": null,
+  "photoCaption": "that's me",
+  "rev": "Nov 2026"
+ },
+ "pillars": [
+  {
+   "key": "cad",
+   "label": "CAD",
+   "text": "SolidWorks models, snap-fit housings, and parts designed around how they get made.",
+   "word": "CAD"
+  },
+  {
+   "key": "electronics",
+   "label": "Electronics",
+   "text": "Custom PCBs I lay out and hand-solder, plus ESP32 and Arduino builds.",
+   "word": "electronics"
+  },
+  {
+   "key": "test",
+   "label": "Test",
+   "text": "Hand calcs checked in simulation, then proven on the bench.",
+   "word": "test"
+  }
+ ],
+ "about": {
+  "intro": [
+   "I'm Moataz, a mechanical engineering senior at Boston University. My main interests are robotics, R&D, 3D printing, and electromechanical design.",
+   "The projects I like most need a CAD model, a circuit board, and a test plan to all work together. This site shows the ones I'm proud of and what I learned building them."
+  ],
+  "facts": [
+   [
+    "School",
+    "Boston University, B.S. Mechanical Engineering"
+   ],
+   [
+    "Experience",
+    "Two co-ops at Johnson & Johnson MedTech"
+   ],
+   [
+    "Focus",
+    "Robotics, R&D, electromechanical design"
+   ]
+  ],
+  "jobs": [
+   {
+    "company": "Johnson & Johnson MedTech",
+    "roles": [
+     {
+      "title": "R&D Design Engineer Co-op",
+      "meta": "Cincinnati, OH, May to Aug 2026",
+      "stories": [
+       {
+        "text": "Challenge story goes here: what was hard, what I did, and how it turned out. Kept vague on purpose.",
+        "draft": true
+       },
+       {
+        "text": "Challenge story goes here: what was hard, what I did, and how it turned out. Kept vague on purpose.",
+        "draft": true
+       }
+      ]
+     },
+     {
+      "title": "Co-op, Biosurgery",
+      "meta": "Raritan, NJ, Jul to Dec 2025",
+      "stories": [
+       {
+        "text": "Confirm this job title, then one challenge story goes here.",
+        "draft": true
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "skills": [
+   {
+    "title": "CAD",
+    "items": [
+     "SolidWorks parts, assemblies, motion studies, and FEA",
+     "Snap-fits and hinges",
+     "Design for 3D printing",
+     "Laser cutting",
+     "Reading engineering drawings"
+    ]
+   },
+   {
+    "title": "Electronics",
+    "items": [
+     "PCB design",
+     "SMD and through-hole soldering",
+     "ESP32 and Arduino",
+     "Motors, servos, and solenoids",
+     "Op-amp circuits"
+    ]
+   },
+   {
+    "title": "Test",
+    "items": [
+     "Hand calcs checked in simulation",
+     "Requirements with a test for each",
+     "Tolerance and fit test prints",
+     "Oscilloscope measurements",
+     "Iterating on prototypes"
+    ]
+   }
+  ]
+ },
+ "projects": [
+  {
+   "slug": "flint",
+   "title": "Flint",
+   "kicker": "Gym wearable",
+   "year": "2025",
+   "featured": true,
+   "size": "lead",
+   "hidden": false,
+   "pillars": [
+    "cad",
+    "electronics"
+   ],
+   "card": "A gym wearable that estimates how close you are to muscle failure. Custom PCB, snap-fit housing, and a phone app.",
+   "summary": "A wearable that estimates how close a lifter is to muscle failure. I designed the circuit board and the housing, then built the app around them.",
+   "facts": [
+    [
+     "Year",
+     "2025, in progress"
+    ],
+    [
+     "Type",
+     "Personal project"
+    ],
+    [
+     "My role",
+     "Electrical, mechanical, and app design"
+    ]
+   ],
+   "tags": [
+    "PCB design",
+    "Hand soldering",
+    "Snap-fit housing",
+    "6-axis IMU",
+    "Phone app"
+   ],
+   "numbered": true,
+   "related": null,
+   "cover": {
+    "src": "assets/img/cover-flint.webp",
+    "w": 960,
+    "h": 720,
+    "alt": "Flint prototype glowing red on its charger"
+   },
+   "thumb": {
+    "src": "assets/img/thumb-flint.webp",
+    "w": 240,
+    "h": 180
+   },
+   "lead": {
+    "src": "assets/img/lead-flint.webp",
+    "w": 1400,
+    "h": 875
+   },
+   "strip": [
+    {
+     "src": "assets/img/strip-flint-pcb.webp",
+     "w": 480,
+     "h": 360,
+     "label": "Custom PCB"
+    },
+    {
+     "src": "assets/img/strip-flint-housing.webp",
+     "w": 452,
+     "h": 339,
+     "label": "Snap-fit housing"
+    },
+    {
+     "src": "assets/img/strip-flint-app.webp",
+     "w": 480,
+     "h": 360,
+     "label": "Phone app"
+    }
+   ],
+   "steps": [
+    {
+     "title": "Problem",
+     "body": [
+      "Lifters have no objective way to tell how close a set is to muscle failure, one of the key drivers of strength and muscle growth."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Approach",
+     "body": [
+      "My first idea was EMG on the working muscle. Electrodes were hard to secure and remove, and most muscles are covered by clothing.",
+      "I switched to velocity-based training (VBT), which estimates fatigue from how the weight moves. That set three requirements:"
+     ],
+     "bullets": [
+      "A low-noise 6-axis IMU to measure acceleration and angular velocity",
+      "A phone app connection to process and display the data",
+      "Mounting that lets the IMU track the weight's movement"
+     ],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Electronics",
+     "body": [
+      "A wearable has to be compact to be comfortable, so a custom PCB was non-negotiable. I designed two revisions and hand-soldered every SMD and through-hole part.",
+      "Rev 2 fixed most of rev 1's problems and needed only a few bodge wires."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "Lesson: plan for rotating parts, LEDs, and ports from day one.",
+     "media": [
+      {
+       "cols": 2,
+       "ratio": "3/2",
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/flint-schematic-rev1.webp",
+         "w": 1806,
+         "h": 1224,
+         "cap": "Rev 1 schematic",
+         "alt": "Schematic of the first Flint PCB",
+         "fit": "contain"
+        },
+        {
+         "type": "img",
+         "src": "assets/img/flint-schematic-rev2.webp",
+         "w": 600,
+         "h": 424,
+         "cap": "Rev 2 schematic, redesigned",
+         "alt": "Schematic of the redesigned Flint PCB",
+         "fit": "contain"
+        },
+        {
+         "type": "img",
+         "src": "assets/img/flint-board-rev1.webp",
+         "w": 1474,
+         "h": 1144,
+         "cap": "Rev 1, assembled",
+         "alt": "First Flint PCB, assembled and powered with a battery attached"
+        },
+        {
+         "type": "img",
+         "src": "assets/img/flint-board-rev2.webp",
+         "w": 600,
+         "h": 800,
+         "cap": "Rev 2, assembled",
+         "alt": "Second Flint PCB, smaller, with LEDs lit",
+         "pos": "50% 74%"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Housing",
+     "body": [
+      "Three parts: bottom overmold, top overmold, and dial. I exported the PCB as a 3D model and designed the housing around it.",
+      "The PCB and battery slide into the bottom half and the top half locks them in. With 2 mm walls, the snap-fits were the hard part. I ended up with four button-tipped tabs and a center dovetail that guides everything into place."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 2,
+       "ratio": "4/3",
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/flint-housing-cad.webp",
+         "w": 600,
+         "h": 339,
+         "cap": "PCB and battery seated in the bottom overmold",
+         "alt": "CAD view of the Flint PCB inside the bottom housing",
+         "fit": "contain"
+        },
+        {
+         "type": "img",
+         "src": "assets/img/flint-snapfit.webp",
+         "w": 1056,
+         "h": 1126,
+         "cap": "Snap-fit tabs, close up",
+         "alt": "CAD close-up of the snap-fit tabs on the Flint housing",
+         "fit": "contain"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Assembly and app",
+     "body": [
+      "I assembled the device with a custom velcro strap and built a phone app around it.",
+      "The app's GymScore ring combines several metrics, half of them straight from the device. A device tab updates the firmware from the phone, and a live workout view counts reps and analyzes failure. That view is still in progress. A workout can also be started from the dial on the device."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 3,
+       "ratio": "3/4",
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/flint-parts.webp",
+         "w": 1200,
+         "h": 1600,
+         "cap": "Every part before assembly",
+         "alt": "Flint housing, strap, battery, dial, and PCB laid out on a box"
+        },
+        {
+         "type": "img",
+         "src": "assets/img/flint-on-hand.webp",
+         "w": 1200,
+         "h": 1600,
+         "cap": "Strapped on",
+         "alt": "Flint wearable strapped to the back of a hand"
+        },
+        {
+         "type": "img",
+         "src": "assets/img/flint-glow-white.webp",
+         "w": 1200,
+         "h": 1600,
+         "cap": "Powered up on the charger",
+         "alt": "Flint wearable glowing white while charging"
+        }
+       ]
+      },
+      {
+       "cols": 3,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/flint-app-home.webp",
+         "w": 693,
+         "h": 1400,
+         "cap": "Home: the GymScore ring",
+         "alt": "Flint app home screen with a GymScore of 54",
+         "phone": true
+        },
+        {
+         "type": "img",
+         "src": "assets/img/flint-app-device.webp",
+         "w": 688,
+         "h": 1400,
+         "cap": "Device tab with firmware update",
+         "alt": "Flint app device screen showing battery, live IMU data, and firmware status",
+         "phone": true
+        },
+        {
+         "type": "img",
+         "src": "assets/img/flint-app-workout.webp",
+         "w": 713,
+         "h": 1400,
+         "cap": "Live workout view, in progress",
+         "alt": "Flint app live workout screen counting 10 reps",
+         "phone": true
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "chip",
+   "title": "C.H.I.P",
+   "kicker": "Compact Hazardous-environment Investigation Probe",
+   "year": "2025",
+   "featured": true,
+   "size": "",
+   "hidden": false,
+   "pillars": [
+    "cad",
+    "electronics",
+    "test"
+   ],
+   "card": "A smaller, controller-driven rebuild of our hackathon robot, with a clear resin shell for a future camera.",
+   "summary": "A smaller, controller-driven rebuild of our hackathon-winning spherical robot, with a clear shell for a future camera.",
+   "facts": [
+    [
+     "Year",
+     "2025"
+    ],
+    [
+     "Type",
+     "Personal project"
+    ],
+    [
+     "Builds on",
+     "H.A.M.S.T.E.R., our hackathon robot"
+    ]
+   ],
+   "tags": [
+    "Robotics",
+    "3D printing",
+    "Resin finishing",
+    "ESP32",
+    "Bluetooth controller"
+   ],
+   "numbered": true,
+   "related": {
+    "slug": "hamster",
+    "label": "See the hackathon version: H.A.M.S.T.E.R."
+   },
+   "cover": {
+    "src": "assets/img/cover-chip.webp",
+    "w": 960,
+    "h": 720,
+    "alt": "C.H.I.P robot with its clear shell next to a game controller"
+   },
+   "thumb": {
+    "src": "assets/img/thumb-chip.webp",
+    "w": 240,
+    "h": 180
+   },
+   "lead": null,
+   "strip": [],
+   "steps": [
+    {
+     "title": "Goal",
+     "body": [
+      "Take H.A.M.S.T.E.R., the robot my team built in a 24-hour hackathon, and refine it. I wanted three changes: a smaller body so it deploys more easily, Bluetooth controller support, and a more polished design."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Shrink the core",
+     "body": [
+      "The hackathon robot fastened everything to a laser-cut plate. I replaced it with a custom 3D printed core that packs every component into a smaller footprint."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 2,
+       "ratio": "4/3",
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/chip-core-cad.webp",
+         "w": 750,
+         "h": 562,
+         "cap": "Inner core, which houses the electronics and weights",
+         "alt": "CAD model of the C.H.I.P inner core",
+         "fit": "contain"
+        },
+        {
+         "type": "img",
+         "src": "assets/img/chip-core-built.webp",
+         "w": 1186,
+         "h": 986,
+         "cap": "Core with electronics mounted",
+         "alt": "C.H.I.P inner core with wheels and electronics, held inside half of the shell"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Balance it",
+     "body": [
+      "Testing showed that the real problem was center of mass. If it does not sit below the point where the wheels touch the shell, the core spins inside the shell and the robot goes nowhere.",
+      "I weighed, adjusted, and retested until the design drove reliably."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "Mass too high and it just spins in place.",
+     "media": []
+    },
+    {
+     "title": "Clear shell",
+     "body": [
+      "I made two shells: one printed in white PETG and one in clear resin. I sanded the resin shell and sprayed it with several finishing coats to get it as transparent as possible, so a future camera can see through it for teleoperation."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 2,
+       "ratio": "5/6",
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/chip-shell-curing.webp",
+         "w": 616,
+         "h": 720,
+         "cap": "Resin shell curing",
+         "alt": "Resin shell half curing under blue UV light"
+        },
+        {
+         "type": "img",
+         "src": "assets/img/chip-shell-clear.webp",
+         "w": 598,
+         "h": 748,
+         "cap": "After the transparent coats",
+         "alt": "Clear resin shell half drying on cardboard"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Controller",
+     "body": [
+      "I updated the firmware on the ESP32 for wireless control, then wrote code that maps joystick input to the independent rotation of each motor. The result is smooth, responsive driving."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Result",
+     "body": [
+      "A compact, rugged search vehicle with controller support, a clear shell ready for a camera feed, and shells that swap for different jobs."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    }
+   ]
+  },
+  {
+   "slug": "hamster",
+   "title": "H.A.M.S.T.E.R.",
+   "kicker": "Hazardous Area Mobility and Search Technology for Emergency Response",
+   "year": "2025",
+   "featured": true,
+   "size": "",
+   "hidden": false,
+   "pillars": [
+    "cad",
+    "electronics"
+   ],
+   "card": "A spherical search and rescue robot built in 24 hours. 1st place overall at MakeHarvard.",
+   "summary": "A spherical search and rescue robot built in 24 hours at MakeHarvard. Our team took 1st place overall.",
+   "facts": [
+    [
+     "Year",
+     "2025"
+    ],
+    [
+     "Type",
+     "Team of 4, 24-hour hackathon"
+    ],
+    [
+     "Result",
+     "1st place overall, 15+ teams"
+    ]
+   ],
+   "tags": [
+    "Robotics",
+    "Rapid prototyping",
+    "Laser cutting",
+    "3D printing",
+    "Wireless control"
+   ],
+   "numbered": true,
+   "related": {
+    "slug": "chip",
+    "label": "See the refined version: C.H.I.P"
+   },
+   "cover": {
+    "src": "assets/img/cover-hamster.webp",
+    "w": 960,
+    "h": 720,
+    "alt": "H.A.M.S.T.E.R. spherical robot with a black perforated shell and yellow band"
+   },
+   "thumb": {
+    "src": "assets/img/thumb-hamster.webp",
+    "w": 240,
+    "h": 180
+   },
+   "lead": null,
+   "strip": [],
+   "steps": [
+    {
+     "title": "Problem",
+     "body": [
+      "Natural disasters are becoming more frequent and more intense, and hazardous conditions can delay search operations for days. One of my teammates saw that firsthand during the California wildfires.",
+      "We wanted a robust, nimble robot that could search dangerous areas for survivors remotely."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Concept",
+     "body": [
+      "A sphere. The outer shell protects the electronics and rolls over rough terrain, a low center of mass keeps the robot from flipping, and the whole thing is small enough to deploy quickly and drive from a phone."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Inner core",
+     "body": [
+      "Everything mounts to a 12 cm x 12 cm laser-cut base. I made custom holders for the motors, and the wheels point outward near the middle of the body instead of sitting underneath. Inside a sphere, they still reach the shell.",
+      "Weights under the base lower the center of mass so the core self-stabilizes."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 1,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/hamster-core.webp",
+         "w": 600,
+         "h": 800,
+         "cap": "The inner core",
+         "alt": "Robot inner core with two wheels, motors, and a microcontroller"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Outer shell",
+     "body": [
+      "Two 3D printed halves in black PLA. We had no transparent filament, so we added holes instead. As the shell spins, the camera's frame rate blurs them into a see-through view, like looking past a spinning fan."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 1,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/hamster-shells.webp",
+         "w": 600,
+         "h": 800,
+         "cap": "Shell halves off the printer",
+         "alt": "Two black perforated shell halves on a cutting mat"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Result",
+     "body": [
+      "1st place overall. We also designed and tested a camera and air quality sensors, but ran out of time to integrate them with the drive code."
+     ],
+     "bullets": [],
+     "links": [
+      {
+       "label": "MakeHarvard's post about the win",
+       "href": "https://www.instagram.com/p/DGBdfL1JKBN/?img_index=1"
+      }
+     ],
+     "note": "",
+     "media": [
+      {
+       "cols": 3,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/hamster-team.webp",
+         "w": 600,
+         "h": 496,
+         "cap": "The team after judging",
+         "alt": "Four teammates standing in front of a screen that reads First Place"
+        },
+        {
+         "type": "video",
+         "src": "assets/video/hamster-roll-1.mp4",
+         "poster": "assets/img/poster-hamster-roll-1.webp",
+         "w": 720,
+         "h": 1280,
+         "cap": "Driving at the event",
+         "portrait": true
+        },
+        {
+         "type": "video",
+         "src": "assets/video/hamster-roll-2.mp4",
+         "poster": "assets/img/poster-hamster-roll-2.webp",
+         "w": 720,
+         "h": 1280,
+         "cap": "Demo for the crowd",
+         "portrait": true
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "solidworks",
+   "title": "SolidWorks",
+   "kicker": "Modeling, motion studies, and FEA",
+   "year": "2024",
+   "featured": true,
+   "size": "third",
+   "hidden": false,
+   "pillars": [
+    "cad",
+    "test"
+   ],
+   "card": "Part modeling from engineering drawings, motion studies that check my hand calcs, and FEA.",
+   "summary": "How I use SolidWorks: modeling parts from engineering drawings, running motion studies to check hand calculations, and using FEA to find weak spots before anything gets made.",
+   "facts": [
+    [
+     "Years",
+     "2024 to 2026"
+    ],
+    [
+     "Type",
+     "Coursework and team projects"
+    ],
+    [
+     "Tools",
+     "Part modeling, Hole Wizard, Motion, Simulation"
+    ]
+   ],
+   "tags": [
+    "Part modeling",
+    "Reading drawings",
+    "Hole Wizard",
+    "Motion studies",
+    "FEA"
+   ],
+   "numbered": false,
+   "related": null,
+   "cover": {
+    "src": "assets/img/cover-solidworks.webp",
+    "w": 960,
+    "h": 720,
+    "alt": "Engineering drawing of a gauge block with section and isometric views"
+   },
+   "thumb": {
+    "src": "assets/img/thumb-solidworks.webp",
+    "w": 240,
+    "h": 180
+   },
+   "lead": null,
+   "strip": [],
+   "steps": [
+    {
+     "title": "Modeling from drawings",
+     "body": [
+      "In my Intro to CAD class, each project starts with an engineering drawing that I read and recreate as a model."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 2,
+       "ratio": "4/3",
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/sw-drawing-revolve.webp",
+         "w": 2400,
+         "h": 1854,
+         "cap": "Model 1, built around the revolve feature. Three hours to read the drawing, plan the build, and recreate the model and its drawing.",
+         "alt": "Engineering drawing of a revolved fitting",
+         "fit": "contain"
+        },
+        {
+         "type": "img",
+         "src": "assets/img/sw-drawing-holes.webp",
+         "w": 1678,
+         "h": 1298,
+         "cap": "Model 2, a more complex drawing. Hole Wizard handled the counterbored, countersunk, and tapped holes.",
+         "alt": "Engineering drawing of a gauge block with multiple hole types",
+         "fit": "contain"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Motion studies",
+     "body": [
+      "I use motion studies to check calculations before building. For a rod-carrying cart, one study confirmed my hand-calculated tipping acceleration and a second confirmed that the velocity profile covers 10 feet. For a 4-bar linkage, I pulled motor torque and bearing reaction forces from the study."
+     ],
+     "bullets": [],
+     "links": [
+      {
+       "label": "See the cart project",
+       "href": "#cart"
+      }
+     ],
+     "note": "",
+     "media": [
+      {
+       "cols": 2,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "video",
+         "src": "assets/video/sw-fourbar-motion.mp4",
+         "poster": "assets/img/poster-sw-fourbar-motion.webp",
+         "w": 816,
+         "h": 576,
+         "cap": "4-bar linkage motion study",
+         "loop": true
+        },
+        {
+         "type": "video",
+         "src": "assets/video/cart-sim-travel.mp4",
+         "poster": "assets/img/poster-cart-sim-travel.webp",
+         "w": 1280,
+         "h": 664,
+         "cap": "Cart velocity profile over 10 feet",
+         "loop": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "FEA",
+     "body": [
+      "For a bell rocket nozzle, a teammate and I ran FEA at our calculated pressures. The first design was too thin in places, so I revised it and tested it again at a factor of safety of 2."
+     ],
+     "bullets": [],
+     "links": [
+      {
+       "label": "See the rocket nozzle project",
+       "href": "#rocket-nozzle"
+      }
+     ],
+     "note": "",
+     "media": [
+      {
+       "cols": 2,
+       "ratio": "16/10",
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/nozzle-fea.webp",
+         "w": 1600,
+         "h": 854,
+         "cap": "Stress results at a factor of safety of 2",
+         "alt": "FEA stress plot of a rocket nozzle",
+         "fit": "contain"
+        },
+        {
+         "type": "img",
+         "src": "assets/img/nozzle-fixtures.webp",
+         "w": 1168,
+         "h": 770,
+         "cap": "Fixed geometry for the study",
+         "alt": "Rocket nozzle model with fixture locations marked",
+         "fit": "contain"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "whack-a-mole",
+   "title": "CoreXY Whack-A-Mole",
+   "kicker": "A game with one very fast mole",
+   "year": "2026",
+   "featured": true,
+   "size": "third",
+   "hidden": false,
+   "pillars": [
+    "cad",
+    "electronics"
+   ],
+   "card": "One mole on a CoreXY gantry travels to a hole, pops up, and dares you to hit it.",
+   "summary": "A whack-a-mole game where a single mole physically travels to a hole on a CoreXY gantry, then pops up. Hit it three times and you win.",
+   "facts": [
+    [
+     "Year",
+     "2026"
+    ],
+    [
+     "Type",
+     "Team project, ME 360 at Boston University"
+    ],
+    [
+     "My role",
+     "Concept pitch, mole mechanism, top panel, button wiring"
+    ]
+   ],
+   "tags": [
+    "Mechanism design",
+    "Rack and pinion",
+    "CoreXY gantry",
+    "Laser cutting",
+    "3D printing"
+   ],
+   "numbered": true,
+   "related": null,
+   "cover": {
+    "src": "assets/img/cover-whack-a-mole.webp",
+    "w": 753,
+    "h": 565,
+    "alt": "Whack-a-mole game with a green painted top panel and a green mole with a red button"
+   },
+   "thumb": {
+    "src": "assets/img/thumb-whack-a-mole.webp",
+    "w": 240,
+    "h": 180
+   },
+   "lead": null,
+   "strip": [],
+   "steps": [
+    {
+     "title": "Brief",
+     "body": [
+      "Design a 2.5 degree-of-freedom device with a clear purpose. I pitched a whack-a-mole game where the mole chooses a hole, travels to it, and pops up. You have to hit it while it is extended. Catch it three times and you win."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 1,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/wam-sketch.webp",
+         "w": 600,
+         "h": 450,
+         "cap": "My pitch sketch",
+         "alt": "Whiteboard sketch of the gantry and mole mechanism"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Frame",
+     "body": [
+      "We started by getting the basic gantry layout fixed together."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 1,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/wam-frame.webp",
+         "w": 600,
+         "h": 800,
+         "cap": "The gantry frame",
+         "alt": "Aluminum extrusion gantry frame with red printed brackets"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Mole mechanism",
+     "body": [
+      "I designed the rack and pinion that raises the mole. My first version had nowhere to mount the button, and the solid mole made the assembly too front-heavy.",
+      "The redesign hollowed out the mole and added a button mount."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 2,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/wam-mole-v1.webp",
+         "w": 600,
+         "h": 800,
+         "cap": "Version 1: no button mount, too front-heavy",
+         "alt": "CAD model of the first mole and rack design"
+        },
+        {
+         "type": "video",
+         "src": "assets/video/wam-mole-print-test.mp4",
+         "poster": "assets/img/poster-wam-mole-print-test.webp",
+         "w": 576,
+         "h": 1024,
+         "cap": "First print test of the redesigned mole",
+         "portrait": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Top panel",
+     "body": [
+      "I designed the fixture for the wooden top panel, laser cut and positioned the holes, painted it, and wired the button on the mole."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 2,
+       "ratio": "3/4",
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/wam-panel-raw.webp",
+         "w": 600,
+         "h": 800,
+         "cap": "Laser-cut panel, test fit",
+         "alt": "Unpainted wooden panel with five holes and the mole in the center"
+        },
+        {
+         "type": "img",
+         "src": "assets/img/wam-panel-painted.webp",
+         "w": 600,
+         "h": 800,
+         "cap": "Painted and mounted",
+         "alt": "Painted green and blue panel mounted on the gantry"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Result",
+     "body": [
+      "The finished game, with the mole picking holes on its own."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 1,
+       "ratio": null,
+       "wide": true,
+       "items": [
+        {
+         "type": "video",
+         "src": "assets/video/wam-final.mp4",
+         "poster": "assets/img/poster-wam-final.webp",
+         "w": 1024,
+         "h": 576,
+         "cap": "The finished game in action"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "doorbell",
+   "title": "Retro Mechanical Doorbell",
+   "kicker": "Programmable tunes on a real drum",
+   "year": "2024",
+   "featured": true,
+   "size": "third",
+   "hidden": false,
+   "pillars": [
+    "cad",
+    "electronics",
+    "test"
+   ],
+   "card": "A doorbell that plays programmable tunes on a real drum, using one solenoid and one servo.",
+   "summary": "A doorbell that plays programmable tunes on a real drum. Built for a client brief that asked for a retro look, a mechanical sound, and modern features.",
+   "facts": [
+    [
+     "Year",
+     "2024"
+    ],
+    [
+     "Type",
+     "Team of 4, course project with a sample client"
+    ],
+    [
+     "My role",
+     "Sound mechanism concept, drum mounts, inner housing"
+    ]
+   ],
+   "tags": [
+    "Mechanism design",
+    "Requirements",
+    "Solenoid and servo",
+    "3D printing",
+    "Design iteration"
+   ],
+   "numbered": true,
+   "related": null,
+   "cover": {
+    "src": "assets/img/cover-doorbell.webp",
+    "w": 960,
+    "h": 720,
+    "alt": "Laser-cut wooden doorbell housing with an engraved rose"
+   },
+   "thumb": {
+    "src": "assets/img/thumb-doorbell.webp",
+    "w": 240,
+    "h": 180
+   },
+   "lead": null,
+   "strip": [],
+   "steps": [
+    {
+     "title": "Client brief",
+     "body": [
+      "A sample client asked for a retro doorbell with a mechanically actuated sound and modern features. It also had to be pet-friendly and inclusive to use.",
+      "We ranked our objectives with a pairwise comparison chart and defined a test for each one:"
+     ],
+     "bullets": [
+      "A loud, pleasant mechanical tune, between 60 and 70 dB",
+      "A retro look, reminiscent of the 1960s",
+      "Activation that does not depend on most senses or appendages, with sound below 25,000 Hz",
+      "A customizable tune"
+     ],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Concept",
+     "body": [
+      "The hardest part was a mechanical sound source that could play different pre-programmed songs. My idea was a rain drum, a small drum with several notes.",
+      "A solenoid strikes the drum, and a continuous servo rotates it to bring each note under the striker."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "One solenoid instead of six.",
+     "media": []
+    },
+    {
+     "title": "Mount, version 1",
+     "body": [
+      "My first mount held the drum well. Too well. The tight grip damped the vibration and muted the sound."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 1,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "video",
+         "src": "assets/video/doorbell-mount-v1.mp4",
+         "poster": "assets/img/poster-doorbell-mount-v1.webp",
+         "w": 576,
+         "h": 1024,
+         "cap": "Version 1 damped the sound too much",
+         "portrait": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Mount, version 2",
+     "body": [
+      "I needed to hold the drum firmly while touching as little of it as possible. The drain hole in the bottom of the drum solved it. A tight-tolerance part grips the drum from the inside and leaves the surface free to ring."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 1,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "video",
+         "src": "assets/video/doorbell-mount-v2.mp4",
+         "poster": "assets/img/poster-doorbell-mount-v2.webp",
+         "w": 776,
+         "h": 576,
+         "cap": "Version 2: simpler, and a better fit",
+         "loop": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Integration",
+     "body": [
+      "I designed the inner housing that holds every part in place, with a compartment for the electronics under the servo. My teammates tied the solenoid and servo circuit to an infrared sensor, and everything went into a prototype enclosure."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 2,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "video",
+         "src": "assets/video/doorbell-housing.mp4",
+         "poster": "assets/img/poster-doorbell-housing.webp",
+         "w": 576,
+         "h": 1024,
+         "cap": "Inner housing on the bench",
+         "portrait": true
+        },
+        {
+         "type": "video",
+         "src": "assets/video/doorbell-mechanism.mp4",
+         "poster": "assets/img/poster-doorbell-mechanism.webp",
+         "w": 576,
+         "h": 1024,
+         "cap": "The mechanism inside the prototype housing",
+         "portrait": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Result",
+     "body": [
+      "The finished doorbell, playing its tune."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 2,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "video",
+         "src": "assets/video/doorbell-final.mp4",
+         "poster": "assets/img/poster-doorbell-final.webp",
+         "w": 576,
+         "h": 1024,
+         "cap": "The final doorbell in action",
+         "portrait": true
+        },
+        {
+         "type": "img",
+         "src": "assets/img/doorbell-box.webp",
+         "w": 1200,
+         "h": 1600,
+         "cap": "Final housing",
+         "alt": "Laser-cut wooden doorbell housing with an engraved rose"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "bike-tracker",
+   "title": "Hidden Bike Tracker",
+   "kicker": "An AirTag mount nobody can find",
+   "year": "2024",
+   "featured": true,
+   "size": "",
+   "hidden": false,
+   "pillars": [
+    "cad",
+    "test"
+   ],
+   "card": "A 3D printed AirTag mount that hides in plain sight. Designed, printed, and installed in 4 hours.",
+   "summary": "A 3D printed AirTag mount that hides in plain sight on my bike. Designed, printed, and installed in 4 hours.",
+   "facts": [
+    [
+     "Year",
+     "2024"
+    ],
+    [
+     "Type",
+     "Personal project"
+    ],
+    [
+     "Time",
+     "4 hours, start to finish"
+    ]
+   ],
+   "tags": [
+    "CAD",
+    "3D printing",
+    "Fit testing"
+   ],
+   "numbered": true,
+   "related": null,
+   "cover": {
+    "src": "assets/img/cover-bike-tracker.webp",
+    "w": 960,
+    "h": 720,
+    "alt": "Underside of a bike with an arrow pointing to the hidden tracker mount"
+   },
+   "thumb": {
+    "src": "assets/img/thumb-bike-tracker.webp",
+    "w": 240,
+    "h": 180
+   },
+   "lead": null,
+   "strip": [],
+   "steps": [
+    {
+     "title": "Problem",
+     "body": [
+      "I wanted to check my bike's location from my phone at any time. An AirTag does that, but only if nobody notices it."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Design",
+     "body": [
+      "I had spare black filament, so I picked a black part of the bike and an existing screw to mount to.",
+      "The mount installs upside down, so I modeled it inverted. Once it is on the bike, the lid sits on top and the AirTag never rests on it, which keeps the lid from opening and the tag from falling out.",
+      "After a lot of measuring and several test prints, it fit."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 1,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/tracker-cad.webp",
+         "w": 1516,
+         "h": 1064,
+         "cap": "Final CAD of the mount",
+         "alt": "CAD model of the AirTag mount with its lid",
+         "fit": "contain"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Test",
+     "body": [
+      "I asked a friend to find it. A few minutes of searching turned up nothing. Even after I flipped over the part of the bike it hides on, the black enclosure blended in and was hard to spot."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    }
+   ]
+  },
+  {
+   "slug": "ebike-trunk",
+   "title": "E-Bike Trunk",
+   "kicker": "Designed around my 3D printer",
+   "year": "2024",
+   "featured": true,
+   "size": "",
+   "hidden": false,
+   "pillars": [
+    "cad",
+    "test"
+   ],
+   "card": "A two-door trunk for my e-bike's rack, split in half to fit the printer and snapped back together.",
+   "summary": "A two-door trunk for my e-bike's rear rack. I chose the manufacturing process first, then designed every part around it.",
+   "facts": [
+    [
+     "Year",
+     "2024"
+    ],
+    [
+     "Type",
+     "Personal project"
+    ],
+    [
+     "Made with",
+     "Bambu A1, PETG and PLA"
+    ]
+   ],
+   "tags": [
+    "CAD",
+    "Design for 3D printing",
+    "Snap-fits",
+    "Hinges",
+    "Tolerance testing"
+   ],
+   "numbered": true,
+   "related": null,
+   "cover": {
+    "src": "assets/img/cover-ebike-trunk.webp",
+    "w": 960,
+    "h": 720,
+    "alt": "White 3D printed trunk with black lids mounted on an e-bike rack"
+   },
+   "thumb": {
+    "src": "assets/img/thumb-ebike-trunk.webp",
+    "w": 240,
+    "h": 180
+   },
+   "lead": null,
+   "strip": [],
+   "steps": [
+    {
+     "title": "Problem",
+     "body": [
+      "I ride an e-bike to get around and was tired of wearing a backpack every time I had to carry something. The bike came with a metal rear rack, so I planned a trunk I could throw things into and close."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 1,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/trunk-before.webp",
+         "w": 1600,
+         "h": 1307,
+         "cap": "The bike before",
+         "alt": "E-bike with a bare rear rack and a handwritten note that says trunk needed"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Plan around the process",
+     "body": [
+      "I picked the manufacturing process first: my Bambu A1 printer. Then I sketched the concept, measured the rack, and rebuilt it in CAD so I could design the mount against it.",
+      "The mount combines a tight diagonal fit with screw holes."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Too big to print",
+     "body": [
+      "The trunk was larger than my print bed. I split the body into two halves that snap-fit together."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Lids",
+     "body": [
+      "My first idea was a single thin lid that opened like a garage door. It turned out to be impractical. I switched to two doors with a hinge on each side, so either half opens on its own.",
+      "I test printed hinges at several tolerances before settling on the final fit."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 1,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/trunk-cad.webp",
+         "w": 1526,
+         "h": 1286,
+         "cap": "Final CAD: trunk and lids",
+         "alt": "CAD model of the trunk with two lids",
+         "fit": "contain"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Result",
+     "body": [
+      "Four printed parts. The body halves are white PETG and took about 36 hours each. The lids are black PLA, and one deformed on a hot day.",
+      "It has been a convenient, functional addition to my bike."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "Next time: PETG lids.",
+     "media": [
+      {
+       "cols": 2,
+       "ratio": "3/4",
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/trunk-closed.webp",
+         "w": 1200,
+         "h": 1600,
+         "cap": "Installed, lids closed",
+         "alt": "Trunk mounted on the bike with both lids closed"
+        },
+        {
+         "type": "img",
+         "src": "assets/img/trunk-open.webp",
+         "w": 1200,
+         "h": 1600,
+         "cap": "One lid open",
+         "alt": "Trunk mounted on the bike with one lid open"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "cart",
+   "title": "Rod Transport Cart",
+   "kicker": "Calculated, simulated, built, tested",
+   "year": "2026",
+   "featured": false,
+   "size": "",
+   "hidden": false,
+   "pillars": [
+    "cad",
+    "electronics",
+    "test"
+   ],
+   "card": "Carries a free-standing rod 10 feet and back without tipping it. Hand calcs, simulation, build, test.",
+   "summary": "A cart that carries a free-standing metal rod 10 feet and back as fast as possible without tipping it. Calculated by hand, verified in simulation, then built and tested.",
+   "facts": [
+    [
+     "Year",
+     "2026"
+    ],
+    [
+     "Type",
+     "Team project, ME 360 at Boston University"
+    ],
+    [
+     "Skills",
+     "Dynamics, motion studies, motor control"
+    ]
+   ],
+   "tags": [
+    "Hand calculations",
+    "SolidWorks Motion",
+    "Arduino motor control",
+    "Laser cutting",
+    "Testing"
+   ],
+   "numbered": true,
+   "related": null,
+   "cover": {
+    "src": "assets/img/cover-cart.webp",
+    "w": 600,
+    "h": 450,
+    "alt": "Wooden cart with four laser-cut wheels and an Arduino on top"
+   },
+   "thumb": {
+    "src": "assets/img/thumb-cart.webp",
+    "w": 240,
+    "h": 180
+   },
+   "lead": null,
+   "strip": [],
+   "steps": [
+    {
+     "title": "Brief",
+     "body": [
+      "Move a metal rod standing on top of a cart 10 feet and back, as fast as possible, without knocking it over. That takes two things: a cart, and the fastest velocity profile the rod can survive."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Hand calculations",
+     "body": [
+      "I calculated the maximum acceleration the rod can take before it topples, then mapped that limit to a velocity profile that covers 10 feet."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Verify in simulation",
+     "body": [
+      "I rebuilt the setup in SolidWorks, applied the velocity profile, and measured the reaction force on the rod below, at, and above my calculated limit. The reaction force only reached zero at the calculated value, which confirmed the hand calc.",
+      "I also checked the assembly's degrees of freedom so the study could be trusted."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 2,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/cart-accel-profile.webp",
+         "w": 1600,
+         "h": 1209,
+         "cap": "Velocity input for the limit case",
+         "alt": "SolidWorks function builder showing a linear velocity ramp"
+        },
+        {
+         "type": "img",
+         "src": "assets/img/cart-reaction-force.webp",
+         "w": 600,
+         "h": 196,
+         "cap": "Reaction force on the rod over time",
+         "alt": "Plot of reaction force versus time"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Size the drivetrain",
+     "body": [
+      "The motor tops out at 240 rpm. I calculated the wheel size needed to follow the velocity profile, programmed it into the rotary motor, and ran the study. The cart reached the maximum acceleration and traveled the full 10 feet."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 2,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/cart-velocity-profile.webp",
+         "w": 1600,
+         "h": 938,
+         "cap": "Velocity profile for the full run",
+         "alt": "SolidWorks function builder showing a triangular velocity profile"
+        },
+        {
+         "type": "video",
+         "src": "assets/video/cart-sim-travel.mp4",
+         "poster": "assets/img/poster-cart-sim-travel.webp",
+         "w": 1280,
+         "h": 664,
+         "cap": "Motion study of the 10 foot run",
+         "loop": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Motor control",
+     "body": [
+      "The DC motor runs from an Arduino through an amplifier on a 12 V supply."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 2,
+       "ratio": "4/3",
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/cart-arduino.webp",
+         "w": 1600,
+         "h": 1200,
+         "cap": "Arduino, amplifier, and motor on the bench",
+         "alt": "Arduino wired to a motor driver and DC motor"
+        },
+        {
+         "type": "img",
+         "src": "assets/img/cart-code.webp",
+         "w": 1600,
+         "h": 1167,
+         "cap": "Control code",
+         "alt": "Arduino code for driving the motor forward and backward",
+         "fit": "contain"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Build",
+     "body": [
+      "My team and I cut the plywood deck, 3D printed custom axle and motor fixtures, laser cut and sanded the wheels, wired the electronics, and programmed the profile."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 3,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/cart-laser.webp",
+         "w": 600,
+         "h": 800,
+         "cap": "Laser cutting the wheels",
+         "alt": "Laser cutter cutting wheel parts"
+        },
+        {
+         "type": "video",
+         "src": "assets/video/cart-fixture-test.mp4",
+         "poster": "assets/img/poster-cart-fixture-test.webp",
+         "w": 576,
+         "h": 1024,
+         "cap": "Testing the motor fixture",
+         "portrait": true
+        },
+        {
+         "type": "img",
+         "src": "assets/img/cart-built.webp",
+         "w": 600,
+         "h": 800,
+         "cap": "Assembled cart",
+         "alt": "Wooden cart with electronics mounted on top"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Test",
+     "body": [
+      "We ran the cart several times and tuned it between runs."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 3,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "video",
+         "src": "assets/video/cart-run-1.mp4",
+         "poster": "assets/img/poster-cart-run-1.webp",
+         "w": 576,
+         "h": 1024,
+         "cap": "Bench run",
+         "portrait": true
+        },
+        {
+         "type": "video",
+         "src": "assets/video/cart-run-2.mp4",
+         "poster": "assets/img/poster-cart-run-2.webp",
+         "w": 576,
+         "h": 1024,
+         "cap": "Bench run with the rod",
+         "portrait": true
+        },
+        {
+         "type": "video",
+         "src": "assets/video/cart-run-10ft.mp4",
+         "poster": "assets/img/poster-cart-run-10ft.webp",
+         "w": 576,
+         "h": 1024,
+         "cap": "Full run on the floor",
+         "portrait": true
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "neodymium-siphon",
+   "title": "Neodymium Siphon Design Report",
+   "kicker": "One week from zero to a full design report",
+   "year": "2025",
+   "featured": false,
+   "size": "",
+   "hidden": false,
+   "pillars": [],
+   "card": "A design report for harvesting molten neodymium from an electrolytic cell.",
+   "summary": "A design report for a siphon system that harvests molten neodymium from an electrolytic cell. Researched, modeled, and written in one week.",
+   "facts": [
+    [
+     "Year",
+     "2025"
+    ],
+    [
+     "Type",
+     "Design report"
+    ],
+    [
+     "Time",
+     "One week"
+    ]
+   ],
+   "tags": [
+    "Fluid dynamics",
+    "Thermodynamics",
+    "Material selection",
+    "Technical writing"
+   ],
+   "numbered": false,
+   "related": null,
+   "cover": null,
+   "thumb": null,
+   "lead": null,
+   "strip": [],
+   "steps": [
+    {
+     "title": "What the report covers",
+     "body": [],
+     "bullets": [
+      "A detailed system diagram with annotated components and materials",
+      "Mathematical models that optimize flow rate and efficiency",
+      "Climate considerations and material choices that address sustainability and safety"
+     ],
+     "links": [
+      {
+       "label": "Read the full report",
+       "href": "https://docs.google.com/document/d/1MoFFo4_DhDEMPWUbsAjn5_G3Gd-tA-Qi32zhItfFqIc/edit?usp=sharing"
+      }
+     ],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "What I had to learn",
+     "body": [
+      "To write it, I taught myself the basics of fluid dynamics, thermodynamics, electrolytic cells, and the material properties of neodymium, plus Adobe Illustrator for the system diagram."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    }
+   ]
+  },
+  {
+   "slug": "rocket-nozzle",
+   "title": "Rocket Nozzle",
+   "kicker": "Sized from first principles",
+   "year": "2024",
+   "featured": false,
+   "size": "",
+   "hidden": false,
+   "pillars": [
+    "cad",
+    "test"
+   ],
+   "card": "A bell nozzle sized from first principles, modeled in CAD, and checked with FEA.",
+   "summary": "A bell nozzle designed with BU Rocket Propulsion Group: sized from first principles, modeled in CAD, and checked with FEA.",
+   "facts": [
+    [
+     "Year",
+     "2024"
+    ],
+    [
+     "Type",
+     "Team project, BU Rocket Propulsion Group"
+    ],
+    [
+     "Skills",
+     "Propulsion calculations, CAD, FEA"
+    ]
+   ],
+   "tags": [
+    "Propulsion calculations",
+    "CAD",
+    "FEA"
+   ],
+   "numbered": true,
+   "related": null,
+   "cover": {
+    "src": "assets/img/cover-rocket-nozzle.webp",
+    "w": 696,
+    "h": 522,
+    "alt": "CAD render of a bell rocket nozzle with a bolted flange"
+   },
+   "thumb": {
+    "src": "assets/img/thumb-rocket-nozzle.webp",
+    "w": 240,
+    "h": 180
+   },
+   "lead": null,
+   "strip": [],
+   "steps": [
+    {
+     "title": "Learn",
+     "body": [
+      "New members of BU Rocket Propulsion Group spend their first semester in a crash course on rocket science that ends with a team nozzle design. I spent two months in a rocketry textbook learning specific impulse, thrust, and the geometry that sets them."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Calculate",
+     "body": [
+      "A teammate and I independently solved for 12 design parameters for a given fuel and set of operating conditions."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 1,
+       "ratio": null,
+       "wide": true,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/nozzle-params.webp",
+         "w": 1474,
+         "h": 644,
+         "cap": "The 12 design parameters",
+         "alt": "Spreadsheet of nozzle design parameters in metric and imperial units",
+         "fit": "contain"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Model",
+     "body": [
+      "I modeled the nozzle in CAD from those parameters, using a bell nozzle design."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 1,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/nozzle-cad.webp",
+         "w": 732,
+         "h": 600,
+         "cap": "Nozzle model",
+         "alt": "CAD model of the bell nozzle",
+         "fit": "contain"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Analyze",
+     "body": [
+      "A teammate and I ran FEA at our calculated pressures. The first design was too thin in some areas, so I modified it until it was ready to manufacture."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 2,
+       "ratio": "16/10",
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/nozzle-fea.webp",
+         "w": 1600,
+         "h": 854,
+         "cap": "Tests with a factor of safety of 2",
+         "alt": "FEA stress plot of the nozzle",
+         "fit": "contain"
+        },
+        {
+         "type": "img",
+         "src": "assets/img/nozzle-fixtures.webp",
+         "w": 1168,
+         "h": 770,
+         "cap": "Fixed geometry",
+         "alt": "Nozzle model with fixture locations marked",
+         "fit": "contain"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Result",
+     "body": [
+      "The club was not able to manufacture the new-member nozzles for a test fire that semester, because of supply issues and its larger project, Icarus. I still came away with a working understanding of nozzle design from equations to analysis."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    }
+   ]
+  },
+  {
+   "slug": "heart-rate-monitor",
+   "title": "Heart Rate Monitor",
+   "kicker": "A speaker, used backwards",
+   "year": "2024",
+   "featured": false,
+   "size": "",
+   "hidden": false,
+   "pillars": [
+    "electronics",
+    "test"
+   ],
+   "card": "A speaker used in reverse as a pulse sensor, amplified with a cascade of op-amps.",
+   "summary": "A heart rate monitor that uses a speaker as the sensor and a cascade of op-amps to make the pulse readable.",
+   "facts": [
+    [
+     "Year",
+     "2024"
+    ],
+    [
+     "Skills",
+     "Analog circuits, op-amps, oscilloscope"
+    ]
+   ],
+   "tags": [
+    "Analog circuits",
+    "Op-amps",
+    "Oscilloscope"
+   ],
+   "numbered": true,
+   "related": null,
+   "cover": {
+    "src": "assets/img/cover-heart-rate-monitor.webp",
+    "w": 960,
+    "h": 720,
+    "alt": "Oscilloscope showing a repeating pulse signal"
+   },
+   "thumb": {
+    "src": "assets/img/thumb-heart-rate-monitor.webp",
+    "w": 240,
+    "h": 180
+   },
+   "lead": null,
+   "strip": [],
+   "steps": [
+    {
+     "title": "Idea",
+     "body": [
+      "A speaker turns an electrical signal into motion, and the process works in reverse. Press the speaker against skin and the faint beat of the heart moves it up and down, generating a tiny electrical signal."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Circuit",
+     "body": [
+      "A cascade of op-amps amplifies that signal until it is large enough to read."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 1,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/hr-circuit.webp",
+         "w": 1600,
+         "h": 1200,
+         "cap": "The amplifier on a breadboard",
+         "alt": "Breadboard circuit wired to a small speaker"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Result",
+     "body": [
+      "The amplified pulse, read on an oscilloscope."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 1,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/hr-scope.webp",
+         "w": 1600,
+         "h": 1200,
+         "cap": "Heartbeat on the oscilloscope",
+         "alt": "Oscilloscope screen showing evenly spaced pulses"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "sinkxswim",
+   "title": "SinkXSwim",
+   "kicker": "A pirate ship survival game",
+   "year": "2024",
+   "featured": false,
+   "size": "",
+   "hidden": false,
+   "pillars": [],
+   "card": "A pirate ship survival game built in Godot over one month.",
+   "summary": "A game built in Godot: you are a pirate with the treasure already on board, and the job is keeping the ship afloat until you get home.",
+   "facts": [
+    [
+     "Year",
+     "2024"
+    ],
+    [
+     "Type",
+     "Solo project"
+    ],
+    [
+     "Engine",
+     "Godot"
+    ]
+   ],
+   "tags": [
+    "Godot",
+    "Game design",
+    "Scripting"
+   ],
+   "numbered": true,
+   "related": null,
+   "cover": {
+    "src": "assets/img/cover-sinkxswim.webp",
+    "w": 826,
+    "h": 619,
+    "alt": "SinkXSwim title screen with a sinking pirate ship"
+   },
+   "thumb": {
+    "src": "assets/img/thumb-sinkxswim.webp",
+    "w": 240,
+    "h": 180
+   },
+   "lead": null,
+   "strip": [],
+   "steps": [
+    {
+     "title": "Goal",
+     "body": [
+      "After my first semester of college, I wanted to sharpen my programming. I had made two games with Pygame and wanted to try a professional engine.",
+      "I picked Godot because it is lightweight and its scripting language is close to Python. I worked through a platformer tutorial and added an item of my own, a banana that boosts jump height for a limited time."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 1,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/sxs-platformer.webp",
+         "w": 1524,
+         "h": 1242,
+         "cap": "Tutorial platformer with my custom banana item",
+         "alt": "Simple platformer level built while learning Godot"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Game design",
+     "body": [
+      "I wanted the game to feel chaotic, with the player always running to keep things working. Leaks open below deck and spawn garbage that slows you down. You can only carry so much, so you haul it above deck and throw it overboard.",
+      "Each leak also drops wood, the resource for repairs. If the game senses you are struggling, there is a rare chance a leak drops duct tape that seals every leak at once."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 1,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/sxs-editor.webp",
+         "w": 1600,
+         "h": 924,
+         "cap": "The ship level in the Godot editor",
+         "alt": "Godot editor showing the pirate ship level and game UI"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Build",
+     "body": [
+      "Over a month I wrote the leak and damage tracking, a progress bar to the destination, animations for the ship breaking and sinking, a title screen, sound effects, and a full tutorial level where a talking parrot shows you how to play."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 2,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "video",
+         "src": "assets/video/sxs-tutorial.mp4",
+         "poster": "assets/img/poster-sxs-tutorial.webp",
+         "w": 924,
+         "h": 576,
+         "cap": "Tutorial island"
+        },
+        {
+         "type": "video",
+         "src": "assets/video/sxs-gameplay.mp4",
+         "poster": "assets/img/poster-sxs-gameplay.webp",
+         "w": 926,
+         "h": 576,
+         "cap": "Gameplay"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "title": "Result",
+     "body": [
+      "One complete level, published as a demo on itch.io. The project put my programming skills back to work and taught me to apply them to something bigger."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": [
+      {
+       "cols": 1,
+       "ratio": null,
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/sxs-itch.webp",
+         "w": 1600,
+         "h": 1103,
+         "cap": "The itch.io page",
+         "alt": "Itch.io page for the SinkXSwim demo"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "four-bar-linkage",
+   "title": "4-Bar Linkage",
+   "kicker": "A cat that almost catches a bird",
+   "year": "2024",
+   "featured": false,
+   "size": "",
+   "hidden": false,
+   "pillars": [
+    "cad"
+   ],
+   "card": "A SolidWorks linkage assembly built with McMaster-Carr hardware.",
+   "summary": "A 4-bar linkage assembly in SolidWorks, built with McMaster-Carr hardware and styled as a cat trying to catch a bird.",
+   "facts": [
+    [
+     "Year",
+     "2024"
+    ],
+    [
+     "Tools",
+     "SolidWorks assemblies, McMaster-Carr parts"
+    ]
+   ],
+   "tags": [
+    "SolidWorks assemblies",
+    "Mechanism design",
+    "Bills of materials"
+   ],
+   "numbered": true,
+   "related": null,
+   "cover": null,
+   "thumb": null,
+   "lead": null,
+   "strip": [],
+   "steps": [
+    {
+     "title": "Goal",
+     "body": [
+      "Learn SolidWorks assemblies, and how to present engineering drawings and bills of materials properly."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Motion",
+     "body": [
+      "I tuned the length of each link in an online linkage tool until I had a motion I liked. Then I modeled each piece and assembled them with coincident and rotating mates, and checked that the motion matched."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Detail",
+     "body": [
+      "I styled the linkage so it looks like a cat trying to catch a bird, then finished the assembly with screws, nuts, and washers from McMaster-Carr."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    }
+   ]
+  },
+  {
+   "slug": "temperature-box",
+   "title": "Temperature Sensor Box",
+   "kicker": "An alarm for when it gets too hot or too cold",
+   "year": "2024",
+   "featured": false,
+   "size": "",
+   "hidden": false,
+   "pillars": [
+    "cad",
+    "electronics"
+   ],
+   "card": "An Arduino temperature alarm with a custom 3D printed battery holder.",
+   "summary": "An Arduino box that monitors the temperature around it and sounds an alarm when it leaves a set range.",
+   "facts": [
+    [
+     "Year",
+     "2024"
+    ],
+    [
+     "Type",
+     "Course project, intro to engineering"
+    ]
+   ],
+   "tags": [
+    "Arduino",
+    "Circuits",
+    "CAD",
+    "3D printing"
+   ],
+   "numbered": true,
+   "related": null,
+   "cover": null,
+   "thumb": null,
+   "lead": null,
+   "strip": [],
+   "steps": [
+    {
+     "title": "Build",
+     "body": [
+      "I drilled the enclosure for the speaker, power switch, and LEDs, then recreated the box in CAD to make sure every part would fit. I designed and 3D printed a holder for the 9 V battery, assembled the circuit, and put it all together."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Result",
+     "body": [
+      "A working temperature alarm. The project built on things I already knew and expanded my understanding of Arduino, wiring, and how electrical components talk to each other."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    }
+   ]
+  },
+  {
+   "slug": "laser-cut-portfolio",
+   "title": "Laser-Cut Portfolio",
+   "kicker": "A portfolio you can hold",
+   "year": "2023",
+   "featured": false,
+   "size": "",
+   "hidden": false,
+   "pillars": [],
+   "card": "A physical portfolio book with a laser-cut wooden cover inspired by spider webs.",
+   "summary": "A physical portfolio book with a laser-cut wooden cover, designed from the geometry of spider webs.",
+   "facts": [
+    [
+     "Year",
+     "2023"
+    ],
+    [
+     "Type",
+     "Course project, design"
+    ]
+   ],
+   "tags": [
+    "Sketching",
+    "Adobe Illustrator",
+    "Laser cutting",
+    "Wood finishing"
+   ],
+   "numbered": true,
+   "related": null,
+   "cover": null,
+   "thumb": null,
+   "lead": null,
+   "strip": [],
+   "steps": [
+    {
+     "title": "Brief",
+     "body": [
+      "Take something from nature and use its geometry in a way that leaves it familiar but distinct. I chose spiders and their webs and started sketching."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Digitize",
+     "body": [
+      "I photographed my final sketch, reduced it to black and white in Photoshop, then removed the artifacts by hand in Adobe Illustrator so the laser cutter could read it."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Make",
+     "body": [
+      "I laser cut the cover from wood and stained it for a shinier finish that keeps the raw wood look. The book is bound with archival black paper and a plastic spine."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    }
+   ]
+  },
+  {
+   "slug": "first-robotics",
+   "title": "FIRST Robotics",
+   "kicker": "Intake design and a seat at the controls",
+   "year": "2022",
+   "featured": false,
+   "size": "",
+   "hidden": false,
+   "pillars": [
+    "test"
+   ],
+   "card": "Intake design and driving for my high school FIRST Robotics Competition team.",
+   "summary": "A season on my high school FIRST Robotics Competition team: I designed the intake, helped build a backup robot, and drove at competition.",
+   "facts": [
+    [
+     "Year",
+     "2022"
+    ],
+    [
+     "Type",
+     "Team, LEAP Robotics"
+    ],
+    [
+     "My role",
+     "Intake design, backup robot, driver"
+    ]
+   ],
+   "tags": [
+    "Prototyping",
+    "Iteration",
+    "Driving"
+   ],
+   "numbered": true,
+   "related": null,
+   "cover": null,
+   "thumb": null,
+   "lead": null,
+   "strip": [],
+   "steps": [
+    {
+     "title": "Intake, version 1",
+     "body": [
+      "A row of rubber wheels on a motor-driven axle. The wheels were not rigid enough to fully pull in the game pieces."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Intake, version 2",
+     "body": [
+      "Rubber tubing wrapped around the axle, held by bent metal hanger wire fed through the center. It held extremely well, but the wire made the tube too rigid, the opposite problem.",
+      "I shortened the wire and filled the rest with cut zip ties. The center stayed stiff enough to grip the axle and the outer part stayed soft enough to pull the pieces in."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Final intake",
+     "body": [
+      "We combined the wheels and the tubing, and had the intake start upright and drop down to deploy so the robot fit the size limit."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    },
+    {
+     "title": "Competition",
+     "body": [
+      "Last-minute fixes meant my co-driver and I could not practice until the day before. I drove the body of the robot while he ran the intake and end effector. After the season, I built a ball launcher for a game at our club's fair."
+     ],
+     "bullets": [],
+     "links": [],
+     "note": "",
+     "media": []
+    }
+   ]
+  }
+ ]
+}
