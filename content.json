@@ -2631,7 +2631,7 @@
   {
    "key": "about",
    "label": "About",
-   "show": true
+   "show": false
   },
   {
    "key": "resume",
