@@ -2179,7 +2179,7 @@
    "year": "2024",
    "featured": false,
    "size": "",
-   "hidden": false,
+   "hidden": true,
    "pillars": [
     "electronics",
     "test"
