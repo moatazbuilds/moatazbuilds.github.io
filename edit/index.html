@@ -372,8 +372,12 @@ function loadImg(file) {
     im.src = u;
   });
 }
-function encode(canvas, q) {
+function encode(canvas, q, jpegOnly) {
   return new Promise(function (res, rej) {
+    if (jpegOnly) {
+      canvas.toBlob(function (j) { if (j) { res({ blob: j, ext: 'jpg' }); } else { rej(new Error('This browser could not save the image.')); } }, 'image/jpeg', q);
+      return;
+    }
     canvas.toBlob(function (b) {
       if (b && b.type === 'image/webp') { res({ blob: b, ext: 'webp' }); return; }
       canvas.toBlob(function (j) { if (j) { res({ blob: j, ext: 'jpg' }); } else { rej(new Error('This browser could not save the image.')); } }, 'image/jpeg', q + 0.03);
@@ -418,11 +422,11 @@ function addImage(file, prefix) {
   });
 }
 /* One cropped picture, used for covers, thumbnails and the home photo. */
-function addCrop(file, name, aspect, outW, q) {
+function addCrop(file, name, aspect, outW, q, jpeg) {
   return loadBitmap(file).then(function (bm) {
     var c = cropped(bm, aspect, outW);
-    return encode(c, q || 0.8).then(function (r) {
-      var path = 'assets/img/' + name + '-' + rand4() + '.' + r.ext;
+    return encode(c, q || 0.8, jpeg).then(function (r) {
+      var path = (jpeg ? 'assets/og/' : 'assets/img/') + name + '-' + rand4() + '.' + r.ext;
       pendingAdd(path, r.blob);
       return { src: path, w: c.width, h: c.height };
     });
@@ -995,11 +999,14 @@ function formProject(form, p, i) {
             return p.size === 'lead' && p.featured ? addCrop(f, 'lead-' + p.slug, 16 / 10, 1400, 0.8) : null;
           }).then(function (l) {
             p.lead = l; p.strip = p.strip || [];
+            return addCrop(f, p.slug, 1200 / 630, 1200, 0.84, true);
+          }).then(function (sh) {
+            p.share = sh;
             busy(''); changed(true);
           }, function (e) { busy(''); notice(e.message, 'bad'); });
         }, true),
-        p.cover ? h('button', { class: 'sbtn', type: 'button', onclick: function () { p.cover = null; p.thumb = null; p.lead = null; changed(true); } }, 'Remove') : null),
-      h('p', { class: 'hint' }, 'Cropped to 4:3 from the center. Used on the home page and at the top of the project page.'),
+        p.cover ? h('button', { class: 'sbtn', type: 'button', onclick: function () { p.cover = null; p.thumb = null; p.lead = null; p.share = null; changed(true); } }, 'Remove') : null),
+      h('p', { class: 'hint' }, 'Cropped to 4:3 from the center. Used on the home page, at the top of the project page, and as the picture when someone shares the project link.'),
       p.cover ? field('Describe the photo', p.cover.alt, function (v) { p.cover.alt = v; }, { hint: 'For screen readers and search engines.' }) : null))));
 
   if (p.featured && p.size === 'lead') {
@@ -1092,6 +1099,7 @@ function formMediaRow(p, s, g, gi) {
     h('div', { class: 'mrow__top' },
       select('Per row', String(g.cols || 1), [['1', '1'], ['2', '2'], ['3', '3'], ['4', '4']], function (v) { g.cols = +v; }),
       select('Crop shape', g.ratio || '', ratios, function (v) { g.ratio = v; }),
+      select('Size', g.size || '', [['', 'Full width'], ['medium', 'Medium, centered']], function (v) { if (v) { g.size = v; } else { delete g.size; } }),
       g.items.length === 1 ? check('Full width under the text', g.wide, function (v) { g.wide = v; }) : null,
       h('span', { style: 'flex:1' }),
       iconBtn('↑', 'Move this row up', function () { move(s.media, gi, -1); changed(true); }, gi === 0),
@@ -1159,11 +1167,15 @@ function outputFiles() {
   if (errs.length) { var e = new Error(errs.join('\n')); e.list = true; throw e; }
   c.site.rev = monthYear();
   var html = SiteRender.buildPage(c, state.shell);
+  var shares = SiteRender.sharePages(c), sharePaths = shares.map(function (s) { return s.path; });
+  var oldShares = SiteRender.sharePages(JSON.parse(state.original)).map(function (s) { return s.path; });
   return {
     refs: refs,
-    text: [{ path: 'content.json', text: JSON.stringify(c, null, 1) + '\n' }, { path: 'index.html', text: html }],
+    text: [{ path: 'content.json', text: JSON.stringify(c, null, 1) + '\n' }, { path: 'index.html', text: html }]
+      .concat(shares.map(function (s) { return { path: s.path, text: s.html }; })),
     binary: refs.filter(function (p) { return state.pending.has(p); }).map(function (p) { return { path: p, blob: state.pending.get(p) }; }),
     remove: state.baseRefs.filter(function (p) { return refs.indexOf(p) < 0; })
+      .concat(oldShares.filter(function (p) { return sharePaths.indexOf(p) < 0; }))
   };
 }
 
@@ -1247,7 +1259,7 @@ function downloadZip() {
   busy('Building the zip');
   var how = 'How to put these files on the live site by hand\n\n' +
     '1. Open https://github.com/' + OWNER + '/' + REPO + ' and click Add file, then Upload files.\n' +
-    '2. Unzip this download. Drag everything inside it (index.html, content.json and the assets folder if there is one) onto the upload page.\n' +
+    '2. Unzip this download. Drag everything inside it (index.html, content.json, the project folders, and the assets folder if there is one) onto the upload page.\n' +
     '3. Click Commit changes. The site updates in about a minute.\n' +
     (out.remove.length ? '\nThese files are no longer used and can be deleted from the repository:\n' + out.remove.join('\n') + '\n' : '');
   var files = out.text.map(function (f) { return { name: f.path, blob: new Blob([f.text]) }; })

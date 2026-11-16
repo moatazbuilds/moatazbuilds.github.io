@@ -13,7 +13,13 @@
   "rev": "Nov 2026",
   "mark": "MS",
   "title": "Moataz Sayed Portfolio",
-  "description": "Moataz Sayed is a mechanical engineer at Boston University. Projects in CAD, electronics, and testing."
+  "description": "Moataz Sayed is a mechanical engineer at Boston University. Projects in CAD, electronics, and testing.",
+  "shareImage": {
+   "src": "assets/og/home.jpg",
+   "w": 1200,
+   "h": 630
+  },
+  "url": "https://moatazbuilds.github.io/"
  },
  "pillars": [
   {
@@ -392,7 +398,12 @@
       }
      ]
     }
-   ]
+   ],
+   "share": {
+    "src": "assets/og/flint.jpg",
+    "w": 1200,
+    "h": 630
+   }
   },
   {
    "slug": "chip",
@@ -557,9 +568,31 @@
      "bullets": [],
      "links": [],
      "note": "",
-     "media": []
+     "media": [
+      {
+       "cols": 1,
+       "ratio": "",
+       "wide": false,
+       "items": [
+        {
+         "type": "video",
+         "src": "assets/video/chip-result.mp4",
+         "poster": "assets/img/poster-chip-result.webp",
+         "w": 720,
+         "h": 1280,
+         "cap": "Driving C.H.I.P with the Bluetooth controller",
+         "portrait": true
+        }
+       ]
+      }
+     ]
     }
-   ]
+   ],
+   "share": {
+    "src": "assets/og/chip.jpg",
+    "w": 1200,
+    "h": 630
+   }
   },
   {
    "slug": "hamster",
@@ -704,9 +737,10 @@
      "note": "",
      "media": [
       {
-       "cols": 3,
-       "ratio": null,
-       "wide": false,
+       "cols": 1,
+       "ratio": "",
+       "wide": true,
+       "size": "medium",
        "items": [
         {
          "type": "img",
@@ -715,7 +749,15 @@
          "h": 496,
          "cap": "The team after judging",
          "alt": "Four teammates standing in front of a screen that reads First Place"
-        },
+        }
+       ]
+      },
+      {
+       "cols": 2,
+       "ratio": "",
+       "wide": false,
+       "size": "medium",
+       "items": [
         {
          "type": "video",
          "src": "assets/video/hamster-roll-1.mp4",
@@ -738,7 +780,12 @@
       }
      ]
     }
-   ]
+   ],
+   "share": {
+    "src": "assets/og/hamster.jpg",
+    "w": 1200,
+    "h": 630
+   }
   },
   {
    "slug": "solidworks",
@@ -909,7 +956,12 @@
       }
      ]
     }
-   ]
+   ],
+   "share": {
+    "src": "assets/og/solidworks.jpg",
+    "w": 1200,
+    "h": 630
+   }
   },
   {
    "slug": "whack-a-mole",
@@ -1110,7 +1162,12 @@
       }
      ]
     }
-   ]
+   ],
+   "share": {
+    "src": "assets/og/whack-a-mole.jpg",
+    "w": 1200,
+    "h": 630
+   }
   },
   {
    "slug": "doorbell",
@@ -1316,7 +1373,12 @@
       }
      ]
     }
-   ]
+   ],
+   "share": {
+    "src": "assets/og/doorbell.jpg",
+    "w": 1200,
+    "h": 630
+   }
   },
   {
    "slug": "bike-tracker",
@@ -1416,7 +1478,12 @@
      "note": "",
      "media": []
     }
-   ]
+   ],
+   "share": {
+    "src": "assets/og/bike-tracker.jpg",
+    "w": 1200,
+    "h": 630
+   }
   },
   {
    "slug": "ebike-trunk",
@@ -1579,7 +1646,12 @@
       }
      ]
     }
-   ]
+   ],
+   "share": {
+    "src": "assets/og/ebike-trunk.jpg",
+    "w": 1200,
+    "h": 630
+   }
   },
   {
    "slug": "cart",
@@ -1846,7 +1918,12 @@
       }
      ]
     }
-   ]
+   ],
+   "share": {
+    "src": "assets/og/cart.jpg",
+    "w": 1200,
+    "h": 630
+   }
   },
   {
    "slug": "neodymium-siphon",
@@ -2074,7 +2151,12 @@
      "note": "",
      "media": []
     }
-   ]
+   ],
+   "share": {
+    "src": "assets/og/rocket-nozzle.jpg",
+    "w": 1200,
+    "h": 630
+   }
   },
   {
    "slug": "heart-rate-monitor",
@@ -2183,7 +2265,12 @@
       }
      ]
     }
-   ]
+   ],
+   "share": {
+    "src": "assets/og/heart-rate-monitor.jpg",
+    "w": 1200,
+    "h": 630
+   }
   },
   {
    "slug": "sinkxswim",
@@ -2345,7 +2432,12 @@
       }
      ]
     }
-   ]
+   ],
+   "share": {
+    "src": "assets/og/sinkxswim.jpg",
+    "w": 1200,
+    "h": 630
+   }
   },
   {
    "slug": "four-bar-linkage",

@@ -1,6 +1,6 @@
 // Rebuilds edit/shell.html and index.html from the files in src/ and content.json.
 // Run from the repository root:  node tools/build.mjs
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -26,4 +26,17 @@ const missing = SiteRender.assetRefs(content).filter((f) => !existsSync(path.joi
 if (missing.length) { console.error('Files named in content.json but missing from the repository:\n- ' + missing.join('\n- ')); process.exit(1); }
 
 writeFileSync(path.join(root, 'index.html'), page);
-console.log(`index.html ${Math.round(page.length / 1024)} KB, ${content.projects.length} projects, ${SiteRender.assetRefs(content).length} asset files`);
+
+// Link-preview pages, one folder per project. Folders made by an earlier build that are no longer needed are removed.
+const shares = SiteRender.sharePages(content);
+const keep = new Set(shares.map((s) => s.path.split('/')[0]));
+for (const d of readdirSync(root, { withFileTypes: true })) {
+  if (!d.isDirectory() || keep.has(d.name)) continue;
+  const f = path.join(root, d.name, 'index.html');
+  if (existsSync(f) && readFileSync(f, 'utf8').includes('content="share-page"')) rmSync(path.join(root, d.name), { recursive: true });
+}
+for (const s of shares) {
+  mkdirSync(path.join(root, path.dirname(s.path)), { recursive: true });
+  writeFileSync(path.join(root, s.path), s.html);
+}
+console.log(`index.html ${Math.round(page.length / 1024)} KB, ${content.projects.length} projects, ${SiteRender.assetRefs(content).length} asset files, ${shares.length} preview pages`);

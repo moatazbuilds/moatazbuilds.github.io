@@ -45,7 +45,9 @@
     ['resume', 'Resume', 'Contact block'],
     ['resumeDownload', 'Download PDF', 'Contact block, when a resume is uploaded'],
     ['resumeSoon', 'PDF coming soon', 'Contact block, when there is no resume yet'],
-    ['rev', 'Rev', 'Contact block, before the month']
+    ['rev', 'Rev', 'Contact block, before the month'],
+    ['shareCopy', 'Copy link to share', 'Button at the top of a project page'],
+    ['shareOpen', 'Open', 'Shown only if a shared link cannot jump to the page by itself']
   ];
   var TABS = [['work', 'Projects'], ['about', 'About'], ['resume', 'Resume'], ['contact', 'Contact']];
 
@@ -60,7 +62,8 @@
     c.version = 2;
     c.site = fill(c.site, { name: '', mark: 'MS', role: '', tagline: '', lede: '', email: '', linkedin: '', resume: '', photo: null,
       photoCaption: '', rev: '', title: (c.site && c.site.name ? c.site.name + ' Portfolio' : 'Portfolio'),
-      description: 'Moataz Sayed is a mechanical engineer at Boston University. Projects in CAD, electronics, and testing.' });
+      description: 'Moataz Sayed is a mechanical engineer at Boston University. Projects in CAD, electronics, and testing.',
+      url: 'https://moatazbuilds.github.io/', shareImage: null });
     var nav = Array.isArray(c.nav) ? c.nav.filter(function (n) { return n && TABS.some(function (x) { return x[0] === n.key; }); }) : [];
     TABS.forEach(function (x) { if (!nav.some(function (n) { return n.key === x[0]; })) { nav.push({ key: x[0], label: x[1], show: true }); } });
     nav.forEach(function (n) { if (n.show === undefined) { n.show = true; } if (n.label === undefined) { n.label = ''; } });
@@ -147,6 +150,7 @@
   function media(g) {
     var cls = 'media', cols = g.cols || 1, style = '--cols:' + cols;
     if (g.ratio) { cls += ' media--ratio'; style += ';--ratio:' + g.ratio; }
+    if (g.size === 'medium') { cls += ' media--medium'; }
     var portraitish = g.items.filter(function (it) {
       return (it.type === 'video' && it.portrait) || (it.type === 'img' && it.phone);
     }).length;
@@ -176,7 +180,7 @@
       '<div class="step__body"><div class="step__text">' + text + '</div>' + groups.map(media).join('') + '</div></section>';
   }
 
-  function projectView(p, idx, total, prev, nxt, shown, L) {
+  function projectView(p, idx, total, prev, nxt, shown, L, base) {
     var numbered = p.numbered !== false;
     var facts = (p.facts || []).filter(function (f) { return f[0] && f[1]; }).map(function (f) { return '<dt>' + t(f[0]) + '</dt><dd>' + t(f[1]) + '</dd>'; }).join('');
     var rel = p.related && p.related.slug && shown[p.related.slug] ? '<a class="textlink related" href="#' + p.related.slug + '">' + t(p.related.label) + '</a>' : '';
@@ -192,7 +196,9 @@
     var longTitle = p.title.length > 14 ? ' ptitle--long' : '';
     return '\n<article id="' + p.slug + '" data-view="' + p.slug + '" data-title="' + t(p.title) + '">\n' +
       '<div class="wrap view-pad">\n' +
-      '<div class="crumbs"><a class="back" href="#work">' + A_BACK + t(L.allProjects) + '</a><span class="sheet-no">' + t(L.sheet) + ' ' + idx + ' ' + t(L.of) + ' ' + total + '</span></div>\n' +
+      '<div class="crumbs"><a class="back" href="#work">' + A_BACK + t(L.allProjects) + '</a><span class="crumbs__r">' +
+      (L.shareCopy ? '<button class="copy copy--share" type="button" data-copy="' + t(base + p.slug + '/') + '">' + t(L.shareCopy) + '</button>' : '') +
+      '<span class="sheet-no">' + t(L.sheet) + ' ' + idx + ' ' + t(L.of) + ' ' + total + '</span></span></div>\n' +
       '<div class="sheet">\n' +
       '<header class="phead">\n' +
       '<div>\n' +
@@ -253,6 +259,53 @@
     var feat = all.filter(function (p) { return p.featured; });
     var more = all.filter(function (p) { return !p.featured; });
     return { all: all, feat: feat, more: more, order: feat.concat(more) };
+  }
+
+  /* ------------------------------------------------------------ link previews
+     LinkedIn and other sites never see the part of a link after #, so each project also gets a
+     small page at /<link name>/ that carries its own preview and then sends the visitor on. */
+  function siteBase(c) { return String(c.site.url || '/').replace(/\/*$/, '/'); }
+  function ogTags(c, o) {
+    var base = siteBase(c), img = o.image || c.site.shareImage, m = [];
+    m.push('<meta property="og:type" content="' + (o.type || 'article') + '">');
+    m.push('<meta property="og:site_name" content="' + t(c.site.name) + '">');
+    m.push('<meta property="og:title" content="' + t(o.title) + '">');
+    if (o.desc) { m.push('<meta property="og:description" content="' + t(o.desc) + '">'); }
+    m.push('<meta property="og:url" content="' + t(o.url) + '">');
+    if (img && img.src) {
+      m.push('<meta property="og:image" content="' + t(base + img.src) + '">');
+      if (img.w && img.h) { m.push('<meta property="og:image:width" content="' + img.w + '">', '<meta property="og:image:height" content="' + img.h + '">'); }
+      m.push('<meta name="twitter:card" content="summary_large_image">');
+    }
+    return m.join('\n');
+  }
+  function sharePage(c, o) {
+    var dest = '../#' + o.hash;
+    return '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
+      '<meta name="generator" content="share-page">\n' +
+      '<title>' + t(o.title + ' | ' + c.site.name) + '</title>\n' +
+      (o.desc ? '<meta name="description" content="' + t(o.desc) + '">\n' : '') +
+      ogTags(c, o) + '\n' +
+      '<link rel="canonical" href="' + t(o.url) + '">\n' +
+      '<link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32.png">\n' +
+      '<script>location.replace(' + JSON.stringify(dest) + ');</script>\n' +
+      '</head>\n<body style="margin:0;padding:40px 20px;background:#101d30;color:#e8eef5;font:18px/1.5 system-ui,sans-serif">\n' +
+      '<p><a style="color:#f2c43a" href="' + t(dest) + '">' + t((c.labels.shareOpen || 'Open') + ' ' + o.title) + '</a></p>\n' +
+      '</body>\n</html>\n';
+  }
+  /* Every preview page the site should have right now: one per visible project, plus About. */
+  function sharePages(c) {
+    normalize(c);
+    var base = siteBase(c), out = [];
+    visibleProjects(c).order.forEach(function (p) {
+      out.push({ path: p.slug + '/index.html', html: sharePage(c, { title: p.title, desc: p.card || p.summary, url: base + p.slug + '/', image: p.share, hash: p.slug }) });
+    });
+    if (tabOf(c, 'about').show) {
+      var a = c.about;
+      out.push({ path: 'about/index.html', html: sharePage(c, { title: a.heading, desc: (a.intro || [])[0] || c.site.description, url: base + 'about/', image: null, hash: 'about' }) });
+    }
+    return out;
   }
 
   /* ------------------------------------------------------------ the page */
@@ -412,7 +465,7 @@
     var views = '', n = vp.order.length, shown = {};
     vp.order.forEach(function (p) { shown[p.slug] = true; });
     vp.order.forEach(function (p, i) {
-      views += projectView(p, i + 1, n, vp.order[(i - 1 + n) % n], vp.order[(i + 1) % n], shown, L);
+      views += projectView(p, i + 1, n, vp.order[(i - 1 + n) % n], vp.order[(i + 1) % n], shown, L, siteBase(c));
     });
 
     /* contact block */
@@ -452,7 +505,8 @@
 
     return {
       main: '\n' + home + (about ? '\n' + about : '') + '\n' + views + '\n', foot: foot, nav: nav, brand: brand,
-      title: t(site.title), desc: t(site.description), mode: c.look.mode === 'light' ? 'light' : 'dark', look: look, counts: counts
+      title: t(site.title), desc: t(site.description), mode: c.look.mode === 'light' ? 'light' : 'dark', look: look, counts: counts,
+      og: ogTags(c, { title: site.title, desc: site.description, url: siteBase(c), image: site.shareImage, type: 'website' })
     };
   }
 
@@ -460,7 +514,7 @@
   function buildPage(content, shell) {
     var r = render(content), out = shell;
     [['<!--MAIN-->', r.main], ['<!--FOOT-->', r.foot], ['<!--NAV-->', r.nav], ['<!--BRAND-->', r.brand], ['<!--TITLE-->', r.title],
-      ['<!--DESC-->', r.desc], ['<!--MODE-->', r.mode], ['<!--LOOK-->', r.look]].forEach(function (x) {
+      ['<!--DESC-->', r.desc], ['<!--MODE-->', r.mode], ['<!--LOOK-->', r.look], ['<!--OG-->', r.og]].forEach(function (x) {
       if (out.indexOf(x[0]) < 0) { throw new Error('The page shell is out of date. Reload the editor. (Missing ' + x[0].replace(/[<!>-]/g, '') + ')'); }
       out = out.replace(x[0], function () { return x[1]; });
     });
@@ -471,9 +525,9 @@
   function assetRefs(c) {
     var out = {};
     function add(x) { if (x && typeof x === 'string' && x.indexOf('assets/') === 0) { out[x] = true; } }
-    add(c.site.resume); if (c.site.photo) { add(c.site.photo.src); }
+    add(c.site.resume); if (c.site.photo) { add(c.site.photo.src); } if (c.site.shareImage) { add(c.site.shareImage.src); }
     (c.projects || []).forEach(function (p) {
-      ['cover', 'thumb', 'lead'].forEach(function (k) { if (p[k]) { add(p[k].src); } });
+      ['cover', 'thumb', 'lead', 'share'].forEach(function (k) { if (p[k]) { add(p[k].src); } });
       (p.strip || []).forEach(function (s) { add(s.src); });
       (p.steps || []).forEach(function (s) {
         (s.media || []).forEach(function (g) { (g.items || []).forEach(function (it) { add(it.src); add(it.poster); }); });
@@ -484,7 +538,7 @@
 
   /* Problems that would break the page. Returns a list of plain-language messages. */
   function check(c) {
-    var errs = [], seen = {}, reserved = ['home', 'work', 'about', 'resume', 'contact', 'main', 'projects', 'more', 'edit'];
+    var errs = [], seen = {}, reserved = ['home', 'work', 'about', 'resume', 'contact', 'main', 'projects', 'more', 'edit', 'assets', 'src', 'tools', 'index'];
     (c.projects || []).forEach(function (p, i) {
       var name = p.title || 'Project ' + (i + 1);
       if (!p.title) { errs.push('Project ' + (i + 1) + ' needs a title.'); }
@@ -498,6 +552,6 @@
     return errs;
   }
 
-  return { render: render, buildPage: buildPage, assetRefs: assetRefs, check: check, normalize: normalize, escape: t,
+  return { render: render, buildPage: buildPage, assetRefs: assetRefs, check: check, normalize: normalize, escape: t, sharePages: sharePages,
     LABELS: LABELS, DEFAULT_ACCENT: DEFAULT_ACCENT };
 });
