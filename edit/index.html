@@ -75,6 +75,17 @@ button{cursor:pointer}
 .step.is-off>.step__head{background:#f7ecc4}
 .step.is-off .step__body{opacity:.6}
 .tagoff{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#7a5200;flex:none}
+.kids{margin:2px 0 8px 9px;padding-left:6px;border-left:2px solid var(--rule)}
+.side h3{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--soft);margin:10px 8px 4px;font-weight:700}
+.trow{display:flex;align-items:center;gap:9px}
+.trow input[type="checkbox"]{width:18px;height:18px;margin:0;flex:none}
+.trow input[type="text"]{flex:1;min-width:0;border:1px solid var(--rule-2);border-radius:4px;padding:8px 9px;background:#fff}
+.trow input[type="color"]{width:54px;height:36px;padding:2px;border:1px solid var(--rule-2);border-radius:4px;background:#fff;flex:none}
+.menurow{display:grid;grid-template-columns:74px minmax(0,1fr) auto auto auto;gap:6px;align-items:center;margin-bottom:6px}
+.menurow__what{font-size:13px;color:var(--soft)}
+.menurow input{border:1px solid var(--rule-2);border-radius:4px;padding:7px 9px;background:#fff;min-width:0}
+details.more summary{cursor:pointer;font-weight:600;padding:6px 0}
+details.more[open] summary{margin-bottom:10px}
 .add{margin:10px 8px 0;width:calc(100% - 16px)}
 .sbtn{border:1.5px solid var(--rule-2);background:#fff;border-radius:4px;padding:6px 10px;font-weight:600;font-size:13px;color:var(--ink)}
 .sbtn:hover{background:#f1f4f8}
@@ -474,15 +485,21 @@ function addMediaFiles(files, prefix) {
 <script>
 /* ============================================================== preview */
 var pvFrames, pvActive = 0, pvTimer = 0, pvHash = '', pvToken = 0;
+function tab(key) { return state.content.nav.filter(function (n) { return n.key === key; })[0] || { key: key, label: '', show: false }; }
+var TAB_NAMES = { work: 'Projects', about: 'About', resume: 'Resume', contact: 'Contact' };
 function selHash() {
   var s = state.sel;
-  if (s.kind === 'about') { return 'about'; }
-  if (s.kind === 'project') { var p = state.content.projects[s.i]; return p && !p.hidden && p.slug ? p.slug : ''; }
+  if (s.kind === 'project') { var p = state.content.projects[s.i]; return tab('work').show && p && !p.hidden && p.slug ? p.slug : ''; }
+  if (s.kind === 'work') { return tab('work').show ? 'work' : ''; }
+  if (s.kind === 'about') { return tab('about').show ? 'about' : ''; }
+  if (s.kind === 'resume') { return tab('resume').show ? 'resume' : ''; }
+  if (s.kind === 'contact') { return tab('contact').show ? 'contact' : ''; }
   return '';
 }
 function previewHtml() {
   var html = SiteRender.buildPage(state.content, state.shell);
   html = html.replace(/(src|poster|href)="(assets\/[^"]+)"/g, function (m, a, p) { return a + '="' + urlFor(p) + '"'; });
+  html = html.replace("localStorage.getItem('ms-mode')", 'null');
   return html.replace('</head>', '<style>*,*::before,*::after{animation:none !important}.fan--draw path{stroke-dashoffset:0}.fan--draw text{opacity:1}</style></head>');
 }
 function layoutPreview() {
@@ -622,9 +639,15 @@ function renderSide() {
     }
     return b;
   }
-  side.appendChild(h('h2', null, 'Pages'));
-  side.appendChild(nav('Home and contact', { kind: 'home' }));
-  side.appendChild(nav('About', { kind: 'about' }));
+  side.appendChild(h('h2', null, 'Your site'));
+  side.appendChild(nav('Home', { kind: 'home' }));
+  c.nav.forEach(function (n) {
+    var label = n.label || TAB_NAMES[n.key];
+    side.appendChild(h('div', { class: 'navrow' + (n.show ? '' : ' is-off') },
+      nav(label, { kind: n.key }, n.show ? '' : 'Off'),
+      eyeBtn(!n.show, 'the ' + label + ' tab', function () { n.show = !n.show; changed(true); previewGo(); })));
+  });
+  side.appendChild(nav('Menu, logo and look', { kind: 'settings' }));
   [['Featured projects', true], ['More projects', false]].forEach(function (g) {
     side.appendChild(h('h2', null, g[0]));
     c.projects.forEach(function (p, i) {
@@ -635,7 +658,7 @@ function renderSide() {
     });
   });
   side.appendChild(h('button', { class: 'sbtn sbtn--primary add', type: 'button', onclick: addProject }, 'Add a project'));
-  side.appendChild(h('p', { class: 'hint', style: 'margin:10px 8px 0' }, 'Drag a project onto another one to change the order. The eye hides a project from visitors without deleting it.'));
+  side.appendChild(h('p', { class: 'hint', style: 'margin:10px 8px 0' }, 'The top of this list matches the menu at the top of your site. An eye switches a tab or project off without deleting it. Drag a project onto another one to reorder.'));
   side.scrollTop = y;
 }
 function selectItem(sel) {
@@ -680,22 +703,56 @@ function renderForm() {
   var form = $('#form'), y = form.scrollTop, s = state.sel;
   uid = 0; form.textContent = '';
   if (s.kind === 'home') { formHome(form); }
+  else if (s.kind === 'work') { formWork(form); }
   else if (s.kind === 'about') { formAbout(form); }
+  else if (s.kind === 'resume') { formResume(form); }
+  else if (s.kind === 'contact') { formContact(form); }
+  else if (s.kind === 'settings') { formSettings(form); }
   else if (state.content.projects[s.i]) { formProject(form, state.content.projects[s.i], s.i); }
   form.scrollTop = y;
 }
 
+/* Title, on/off button and status line shared by the four tab forms. */
+function tabHead(form, key, title, blurb) {
+  var n = tab(key);
+  form.appendChild(h('div', { class: 'tools', style: 'margin-bottom:6px' },
+    h('h2', { style: 'flex:1;margin:0' }, title),
+    h('button', { class: 'sbtn' + (n.show ? '' : ' sbtn--primary'), type: 'button', onclick: function () { n.show = !n.show; changed(true); previewGo(); } },
+      n.show ? 'Turn this tab off' : 'Turn this tab on')));
+  form.appendChild(h('p', { class: 'sub' }, n.show ? blurb : 'This tab is off. It is gone from the top menu and visitors cannot reach it. Everything in it is kept, and you can turn it back on any time.'));
+  return n;
+}
+function tabName(n) {
+  return field('Name in the top menu', n.label, function (v) { n.label = v; }, { hint: 'This is the word visitors click at the top of the site.' });
+}
+/* a tick box and a text box on one line */
+function toggleRow(label, obj, showKey, textKey, hint) {
+  var id = 'f' + (++uid), box = h('input', { id: id, type: 'checkbox', checked: !!obj[showKey], 'aria-label': 'Show: ' + label });
+  box.addEventListener('change', function () { obj[showKey] = box.checked; changed(false); });
+  var input = h('input', { type: 'text', id: 'f' + (++uid), 'aria-label': label, value: obj[textKey] == null ? '' : obj[textKey] });
+  input.addEventListener('input', function () { obj[textKey] = input.value; changed(false); });
+  return h('div', { class: 'field' }, h('span', { class: 'lbl' }, label),
+    h('div', { class: 'trow' }, box, input), hint ? h('p', { class: 'hint' }, hint) : null);
+}
+
 function formHome(form) {
-  var c = state.content, site = c.site;
-  form.appendChild(h('h2', null, 'Home and contact'));
-  form.appendChild(h('p', { class: 'sub' }, 'The top of the home page and the contact block at the bottom of every page.'));
+  var c = state.content, site = c.site, home = c.home;
+  form.appendChild(h('h2', null, 'Home'));
+  form.appendChild(h('p', { class: 'sub' }, 'The first thing visitors see. Home is always on, and each part of it has its own switch.'));
   form.appendChild(group('Headline',
     field('Name', site.name, function (v) { site.name = v; }),
     field('Tagline', site.tagline, function (v) { site.tagline = v; }),
     field('Intro sentence', site.lede, function (v) { site.lede = v; }, { rows: 2 })));
 
+  var notes = { work: 'Jumps down to the projects.', resume: 'Jumps to the resume.', linkedin: 'Opens your LinkedIn profile.' };
+  var names = { work: 'Projects button', resume: 'Resume button', linkedin: 'LinkedIn button' };
+  var bg = group('Buttons under the headline', h('p', { class: 'hint', style: 'margin:0 0 10px' }, 'Untick a button to remove it. Change the text to rename it.'));
+  home.buttons.forEach(function (b) { bg.appendChild(toggleRow(names[b.key] || b.key, b, 'show', 'label', notes[b.key])); });
+  form.appendChild(bg);
+
   var photo = h('img', { class: 'thumb thumb--portrait', alt: '', src: site.photo ? urlFor(site.photo.src) : null });
   form.appendChild(group('Your photo',
+    h('div', { class: 'field' }, check('Show the photo frame', home.showPhoto, function (v) { home.showPhoto = v; })),
     h('div', { class: 'coverrow' }, photo, h('div', null,
       h('div', { class: 'tools' },
         filePick(site.photo ? 'Replace photo' : 'Choose photo', 'image/*', false, function (files) {
@@ -707,40 +764,43 @@ function formHome(form) {
       h('p', { class: 'hint' }, 'Cropped to a 4:5 portrait from the center of the picture.'),
       field('Handwritten caption under the photo', site.photoCaption, function (v) { site.photoCaption = v; })))));
 
-  form.appendChild(group('Contact',
-    field('Email', site.email, function (v) { site.email = v.trim(); }, { type: 'email' }),
-    field('LinkedIn address', site.linkedin, function (v) { site.linkedin = v.trim(); }, { type: 'url' }),
-    field('Line under your name in the footer', site.role, function (v) { site.role = v; })));
-
-  form.appendChild(group('Resume PDF',
-    h('p', { style: 'margin:0 0 10px' }, site.resume ? 'Current file: ' + site.resume.split('/').pop() : 'No resume uploaded yet. The download button stays switched off until you add one.'),
-    h('div', { class: 'tools' },
-      filePick(site.resume ? 'Replace PDF' : 'Choose PDF', 'application/pdf,.pdf', false, function (files) {
-        var f = files[0];
-        if (!/\.pdf$/i.test(f.name)) { notice('The resume has to be a PDF file.', 'bad'); return; }
-        var path = 'assets/resume/' + (site.name.trim().replace(/[^A-Za-z0-9]+/g, '-') || 'Resume') + '-Resume.pdf';
-        pendingAdd(path, f); site.resume = path; changed(true);
-      }, true),
-      site.resume ? h('button', { class: 'sbtn', type: 'button', onclick: function () { site.resume = ''; changed(true); } }, 'Remove') : null)));
-
-  var pl = group('The three skill areas');
+  var pl = group('The three skill areas', h('div', { class: 'field' }, check('Show this row on the home page', home.showSkills, function (v) { home.showSkills = v; })));
   c.pillars.forEach(function (p) {
     pl.appendChild(h('div', { class: 'two' },
       field('Label', p.label, function (v) { p.label = v; }),
       field('One line about it', p.text, function (v) { p.text = v; })));
   });
+  pl.appendChild(h('p', { class: 'hint' }, 'These are also the filter buttons above the projects.'));
   form.appendChild(pl);
 }
 
+function formWork(form) {
+  var c = state.content, n = tabHead(form, 'work', 'Projects', 'The project grid on the home page and every project page.');
+  form.appendChild(group('Tab and headings',
+    tabName(n),
+    field('Heading above the big cards', c.work.heading, function (v) { c.work.heading = v; }),
+    field('Heading above the list of smaller projects', c.work.moreHeading, function (v) { c.work.moreHeading = v; }),
+    h('div', { class: 'field' }, check('Show the filter buttons (All, CAD, Electronics, Test)', c.work.showFilter, function (v) { c.work.showFilter = v; }))));
+  var shown = c.projects.filter(function (p) { return !p.hidden; }).length;
+  form.appendChild(group('Your projects',
+    h('p', { style: 'margin:0 0 10px' }, c.projects.length + ' projects, ' + shown + ' visible. Pick one in the left panel to edit it. The eye next to each one hides it without deleting it.'),
+    h('button', { class: 'sbtn sbtn--primary', type: 'button', onclick: addProject }, 'Add a project')));
+}
+
 function formAbout(form) {
-  var ab = state.content.about;
-  form.appendChild(h('h2', null, 'About'));
-  form.appendChild(h('p', { class: 'sub' }, 'Your bio, work experience and skills.'));
+  var ab = state.content.about, n = tabHead(form, 'about', 'About', 'Your bio, work experience and skills. The Resume section sits at the bottom of this page.');
+  form.appendChild(group('Tab and heading',
+    tabName(n),
+    field('Big heading on the page', ab.heading, function (v) { ab.heading = v; })));
   form.appendChild(group('Intro',
     field('Paragraphs', ab.intro.join('\n\n'), function (v) { ab.intro = paras(v); }, { rows: 7, hint: 'Leave an empty line between paragraphs.' })));
-  form.appendChild(group('Quick facts', pairs(ab.facts, 'Label', 'Value', FACT)));
+  form.appendChild(group('Quick facts',
+    h('div', { class: 'field' }, check('Show this table', ab.showFacts, function (v) { ab.showFacts = v; })),
+    pairs(ab.facts, 'Label', 'Value', FACT)));
 
-  var ex = group('Experience');
+  var ex = group('Experience',
+    h('div', { class: 'field' }, check('Show this section', ab.showExperience, function (v) { ab.showExperience = v; })),
+    field('Section heading', ab.experienceHeading, function (v) { ab.experienceHeading = v; }));
   ab.jobs.forEach(function (job, ji) {
     var box = h('div', { class: 'step' },
       h('div', { class: 'step__head' },
@@ -774,7 +834,9 @@ function formAbout(form) {
   ex.appendChild(h('button', { class: 'sbtn', type: 'button', onclick: function () { ab.jobs.push({ company: '', roles: [{ title: '', meta: '', stories: [] }] }); changed(true); } }, 'Add a company'));
   form.appendChild(ex);
 
-  var sk = group('Skills');
+  var sk = group('Skills',
+    h('div', { class: 'field' }, check('Show this section', ab.showSkills, function (v) { ab.showSkills = v; })),
+    field('Section heading', ab.skillsHeading, function (v) { ab.skillsHeading = v; }));
   ab.skills.forEach(function (col, i) {
     sk.appendChild(h('div', { class: 'story' },
       field('Column heading', col.title, function (v) { col.title = v; }),
@@ -783,6 +845,92 @@ function formAbout(form) {
   });
   sk.appendChild(h('button', { class: 'sbtn', type: 'button', onclick: function () { ab.skills.push({ title: '', items: [] }); changed(true); } }, 'Add a column'));
   form.appendChild(sk);
+}
+
+function formResume(form) {
+  var c = state.content, site = c.site, R = c.resume;
+  var n = tabHead(form, 'resume', 'Resume', 'The resume section at the bottom of the About page. The Resume link in the menu jumps straight to it.');
+  form.appendChild(group('Tab and heading',
+    tabName(n),
+    field('Section heading', R.heading, function (v) { R.heading = v; })));
+  form.appendChild(group('Resume PDF',
+    h('p', { style: 'margin:0 0 10px' }, site.resume ? 'Current file: ' + site.resume.split('/').pop() : 'No resume uploaded yet. The download button stays switched off until you add one.'),
+    h('div', { class: 'tools', style: 'margin-bottom:12px' },
+      filePick(site.resume ? 'Replace PDF' : 'Choose PDF', 'application/pdf,.pdf', false, function (files) {
+        var f = files[0];
+        if (!/\.pdf$/i.test(f.name)) { notice('The resume has to be a PDF file.', 'bad'); return; }
+        var path = 'assets/resume/' + (site.name.trim().replace(/[^A-Za-z0-9]+/g, '-') || 'Resume') + '-Resume.pdf';
+        pendingAdd(path, f); site.resume = path; changed(true);
+      }, true),
+      site.resume ? h('button', { class: 'sbtn', type: 'button', onclick: function () { site.resume = ''; changed(true); } }, 'Remove') : null),
+    field('Text on the download button', R.buttonLabel, function (v) { R.buttonLabel = v; }),
+    field('Note shown while there is no PDF', R.hint, function (v) { R.hint = v; }, { hint: 'Leave it empty to show no note.' })));
+  form.appendChild(group('LinkedIn button next to it',
+    toggleRow('LinkedIn button', R, 'showLinkedin', 'linkedinLabel', 'Uses the LinkedIn address from the Contact tab.')));
+}
+
+function formContact(form) {
+  var c = state.content, site = c.site, K = c.contact;
+  var n = tabHead(form, 'contact', 'Contact', 'The block at the bottom of every page. The Contact link in the menu scrolls down to it.');
+  form.appendChild(group('Tab', tabName(n)));
+  form.appendChild(group('Your details',
+    field('Email', site.email, function (v) { site.email = v.trim(); }, { type: 'email' }),
+    field('LinkedIn address', site.linkedin, function (v) { site.linkedin = v.trim(); }, { type: 'url', hint: 'Also used by the LinkedIn buttons on Home and Resume.' }),
+    field('Line under your name', site.role, function (v) { site.role = v; })));
+  form.appendChild(group('What the block shows',
+    h('div', { class: 'checks', style: 'flex-direction:column' },
+      check('Email, with a copy button', K.showEmail, function (v) { K.showEmail = v; }),
+      check('LinkedIn link', K.showLinkedin, function (v) { K.showLinkedin = v; }),
+      check('Resume download', K.showResume, function (v) { K.showResume = v; })),
+    h('p', { class: 'hint' }, 'Your name is always shown. It comes from Home.')));
+}
+
+function formSettings(form) {
+  var c = state.content, site = c.site, look = c.look;
+  form.appendChild(h('h2', null, 'Menu, logo and look'));
+  form.appendChild(h('p', { class: 'sub' }, 'Things that apply to the whole site.'));
+
+  var menu = group('Top menu', h('p', { class: 'hint', style: 'margin:0 0 10px' }, 'Rename a tab, change the order with the arrows, or switch a tab off with the eye.'));
+  c.nav.forEach(function (n, i) {
+    var input = h('input', { type: 'text', id: 'f' + (++uid), 'aria-label': 'Menu name for ' + TAB_NAMES[n.key], value: n.label });
+    input.addEventListener('input', function () { n.label = input.value; changed(false); });
+    menu.appendChild(h('div', { class: 'menurow' },
+      h('span', { class: 'menurow__what' }, TAB_NAMES[n.key]), input,
+      eyeBtn(!n.show, 'the ' + TAB_NAMES[n.key] + ' tab', function () { n.show = !n.show; changed(true); previewGo(); }, true),
+      iconBtn('↑', 'Move ' + TAB_NAMES[n.key] + ' earlier in the menu', function () { move(c.nav, i, -1); changed(true); }, i === 0),
+      iconBtn('↓', 'Move ' + TAB_NAMES[n.key] + ' later in the menu', function () { move(c.nav, i, 1); changed(true); }, i === c.nav.length - 1)));
+  });
+  form.appendChild(menu);
+
+  form.appendChild(group('Logo in the top left',
+    h('div', { class: 'two' },
+      field('Letters in the box', site.mark, function (v) { site.mark = v; }, { hint: 'Two or three letters fit best.' }),
+      field('Name next to it', site.name, function (v) { site.name = v; }, { hint: 'Same name as on Home.' }))));
+
+  var color = h('input', { type: 'color', id: 'f' + (++uid), value: /^#[0-9a-f]{6}$/i.test(look.accent) ? look.accent : SiteRender.DEFAULT_ACCENT, 'aria-label': 'Highlight color' });
+  color.addEventListener('input', function () { look.accent = color.value; changed(false); });
+  form.appendChild(group('Look',
+    select('Mode a new visitor starts in', look.mode, [['dark', 'Dark'], ['light', 'Light']], function (v) { look.mode = v; }),
+    h('div', { class: 'field' }, h('span', { class: 'lbl' }, 'Highlight color'),
+      h('div', { class: 'trow' }, color,
+        h('button', { class: 'sbtn', type: 'button', onclick: function () { look.accent = SiteRender.DEFAULT_ACCENT; changed(true); } }, 'Back to the original yellow')),
+      h('p', { class: 'hint' }, 'Used for the tagline, main buttons and underlines. Pick a light, bright color so dark text stays readable on it.')),
+    h('div', { class: 'field' }, check('Show the protractor arcs in the corners', c.home.showArcs, function (v) { c.home.showArcs = v; }))));
+
+  form.appendChild(group('Browser tab and search results',
+    field('Page title', site.title, function (v) { site.title = v; }, { hint: 'Shown on the browser tab and as the headline in search results.' }),
+    field('Short description', site.description, function (v) { site.description = v; }, { rows: 2, hint: 'One or two sentences. Search engines and link previews show it.' })));
+
+  var det = h('details', { class: 'more' }, h('summary', null, 'Small fixed words around the site (' + SiteRender.LABELS.length + ')'));
+  if (state.openLabels) { det.open = true; }
+  det.addEventListener('toggle', function () { state.openLabels = det.open; });
+  SiteRender.LABELS.forEach(function (l) {
+    det.appendChild(field(l[2], c.labels[l[0]], function (v) { c.labels[l[0]] = v; }, { placeholder: l[1] }));
+  });
+  det.appendChild(h('button', { class: 'sbtn', type: 'button', onclick: function () {
+    SiteRender.LABELS.forEach(function (l) { c.labels[l[0]] = l[1]; }); changed(true);
+  } }, 'Put all of these back to the original wording'));
+  form.appendChild(group('Wording', h('p', { class: 'hint', style: 'margin:0 0 10px' }, 'Every other word on the site, such as "All projects" or "Next project". Most people never need to change these.'), det));
 }
 
 var RATIOS = [['', 'Original shape'], ['4/3', 'Landscape 4:3'], ['3/2', 'Landscape 3:2'], ['16/9', 'Wide 16:9'], ['1/1', 'Square'], ['3/4', 'Tall 3:4']];
@@ -899,7 +1047,7 @@ function formProject(form, p, i) {
   form.appendChild(group('Delete', h('p', { style: 'margin:0 0 10px' }, 'Removes this project from the site the next time you publish.'),
     confirmBtn('Delete this project', function () {
       ps.forEach(function (q) { if (q.related && q.related.slug === p.slug) { q.related = null; } });
-      ps.splice(i, 1); state.sel = { kind: 'home' }; changed(true); previewGo();
+      ps.splice(i, 1); state.sel = { kind: 'work' }; changed(true); previewGo();
     })));
 }
 
@@ -1141,16 +1289,16 @@ function testToken() {
 /* After connecting, make sure the editor is working from the newest version on GitHub. */
 function syncBase() {
   return Promise.all([headSha(), gh('/contents/content.json?ref=' + BRANCH, { raw: true })]).then(function (r) {
-    var fresh = JSON.stringify(JSON.parse(r[1]));
+    var fresh = JSON.stringify(SiteRender.normalize(JSON.parse(r[1])));
     if (fresh === state.original) { state.baseSha = r[0]; return; }
-    if (!isDirty()) { adopt(JSON.parse(r[1])); state.baseSha = r[0]; return; }
+    if (!isDirty()) { adopt(SiteRender.normalize(JSON.parse(r[1]))); state.baseSha = r[0]; return; }
     notice('GitHub has a newer version of the site than the one this editor loaded. Reload the editor before publishing. Your edits are saved in this browser.', 'bad',
       [{ label: 'Reload the editor', run: function () { saveNow(); location.reload(); } }]);
   });
 }
 function adopt(content) {
   state.content = content; state.original = JSON.stringify(content); state.baseRefs = SiteRender.assetRefs(content);
-  if (state.sel.kind === 'project' && !content.projects[state.sel.i]) { state.sel = { kind: 'home' }; }
+  if (state.sel.kind === 'project' && !content.projects[state.sel.i]) { state.sel = { kind: 'work' }; }
   renderSide(); renderForm(); setStatus(); refreshPreview();
 }
 </script>
@@ -1180,14 +1328,14 @@ function start() {
     : getText('../content.json' + bust);
   Promise.all([loadScript('render.js' + bust), getText('shell.html' + bust), contentP, pendingLoad()]).then(function (r) {
     state.shell = r[1];
-    var content = JSON.parse(r[2]);
+    var content = SiteRender.normalize(JSON.parse(r[2]));
     state.content = content; state.original = JSON.stringify(content); state.baseRefs = SiteRender.assetRefs(content);
     busy('');
     var draft = readDraft();
-    if (draft && draft.content && JSON.stringify(draft.content) !== state.original) {
+    if (draft && draft.content && JSON.stringify(SiteRender.normalize(draft.content)) !== state.original) {
       var when = new Date(draft.at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
       notice('You have edits from ' + when + ' that were never published.', '', [
-        { label: 'Bring them back', run: function () { state.content = draft.content; renderSide(); renderForm(); setStatus(); refreshPreview(); } },
+        { label: 'Bring them back', run: function () { state.content = SiteRender.normalize(draft.content); renderSide(); renderForm(); setStatus(); refreshPreview(); } },
         { label: 'Throw them away', run: function () { dropDraft(); pendingClear(); } }]);
     } else { dropDraft(); pendingClear(); }
     renderSide(); renderForm(); setStatus(); layoutPreview(); refreshPreview();

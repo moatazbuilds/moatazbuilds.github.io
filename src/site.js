@@ -13,11 +13,8 @@
   function route(){
     var h='';
     try{h=decodeURIComponent(location.hash.replace(/^#/,''));}catch(e){}
-    if(h==='contact'||h==='main'){
-      var t=doc.getElementById(h); if(t){jump(top(t)-70);}
-      return;
-    }
-    var name=alias.hasOwnProperty(h)?alias[h]:h;
+    var special=h==='contact'||h==='main';
+    var name=special?current:(alias.hasOwnProperty(h)?alias[h]:h);
     if(!names[name]){name='home';}
     current=name;
     views.forEach(function(v){v.hidden=v.id!==name;});
@@ -30,8 +27,8 @@
     var view=names[name], label=view.getAttribute('data-title')||'';
     doc.title=name==='home'?baseTitle:label+' | '+baseTitle;
     if(sheetLabel){sheetLabel.textContent=label;}
-    if(h==='work'){jump(top(doc.getElementById('projects'))-58);}
-    else if(h==='resume'){jump(top(doc.getElementById('resume-block'))-58);}
+    var spot=h==='work'?doc.getElementById('projects'):h==='resume'?doc.getElementById('resume-block'):special?doc.getElementById(h):null;
+    if(spot){jump(top(spot)-(special?70:58));}
     else{jump(0);}
     requestAnimationFrame(rulerY);
   }
@@ -75,7 +72,7 @@
   [].forEach.call(doc.querySelectorAll('[data-filter-go]'),function(b){
     b.addEventListener('click',function(){
       setFilter(b.getAttribute('data-filter-go'));
-      var p=doc.getElementById('projects');
+      var p=doc.getElementById('projects'); if(!p){return;}
       window.scrollTo({top:top(p)-58,behavior:reduce?'auto':'smooth'});
     });
   });

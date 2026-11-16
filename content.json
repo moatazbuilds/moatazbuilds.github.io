@@ -1,5 +1,5 @@
 {
- "version": 1,
+ "version": 2,
  "site": {
   "name": "Moataz Sayed",
   "role": "Mechanical engineer",
@@ -10,7 +10,10 @@
   "resume": "",
   "photo": null,
   "photoCaption": "that's me",
-  "rev": "Nov 2026"
+  "rev": "Nov 2026",
+  "mark": "MS",
+  "title": "Moataz Sayed Portfolio",
+  "description": "Moataz Sayed is a mechanical engineer at Boston University. Projects in CAD, electronics, and testing."
  },
  "pillars": [
   {
@@ -113,7 +116,13 @@
      "Iterating on prototypes"
     ]
    }
-  ]
+  ],
+  "heading": "About",
+  "showFacts": true,
+  "experienceHeading": "Experience",
+  "showExperience": true,
+  "skillsHeading": "Skills",
+  "showSkills": true
  },
  "projects": [
   {
@@ -2612,5 +2621,95 @@
     }
    ]
   }
- ]
+ ],
+ "nav": [
+  {
+   "key": "work",
+   "label": "Projects",
+   "show": true
+  },
+  {
+   "key": "about",
+   "label": "About",
+   "show": true
+  },
+  {
+   "key": "resume",
+   "label": "Resume",
+   "show": true
+  },
+  {
+   "key": "contact",
+   "label": "Contact",
+   "show": true
+  }
+ ],
+ "home": {
+  "showPhoto": true,
+  "showSkills": true,
+  "showArcs": true,
+  "buttons": [
+   {
+    "key": "work",
+    "label": "See the projects",
+    "show": true
+   },
+   {
+    "key": "resume",
+    "label": "Resume",
+    "show": true
+   },
+   {
+    "key": "linkedin",
+    "label": "LinkedIn",
+    "show": true
+   }
+  ]
+ },
+ "work": {
+  "heading": "Projects",
+  "moreHeading": "More projects",
+  "showFilter": true
+ },
+ "resume": {
+  "heading": "Resume",
+  "buttonLabel": "Download resume (PDF)",
+  "showLinkedin": true,
+  "linkedinLabel": "LinkedIn profile",
+  "hint": "The download turns on as soon as the resume PDF is added."
+ },
+ "contact": {
+  "showEmail": true,
+  "showLinkedin": true,
+  "showResume": true
+ },
+ "look": {
+  "mode": "dark",
+  "accent": "#f2c43a"
+ },
+ "labels": {
+  "allProjects": "All projects",
+  "sheet": "Sheet",
+  "of": "of",
+  "prevProject": "Previous project",
+  "nextProject": "Next project",
+  "openProject": "Open the project",
+  "seeProjects": "See {n} {skill} projects",
+  "filterShow": "Show",
+  "filterAll": "All",
+  "colProject": "Project",
+  "colWhat": "What it is",
+  "colYear": "Year",
+  "noCover": "photos for this one are not in the folder yet",
+  "noPhoto": "photo coming soon",
+  "draft": "Draft placeholder",
+  "drawnBy": "Drawn by",
+  "email": "Email",
+  "copy": "Copy address",
+  "linkedin": "LinkedIn",
+  "resume": "Resume",
+  "resumeDownload": "Download PDF",
+  "resumeSoon": "PDF coming soon",
+  "rev": "Rev"
+ }
 }

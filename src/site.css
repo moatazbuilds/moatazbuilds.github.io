@@ -143,6 +143,7 @@ main,.foot{position:relative;z-index:1}
 /* ---------- hero ---------- */
 .hero{position:relative;padding:clamp(32px,5.5vw,76px) 0 clamp(26px,4vw,52px)}
 .hero__grid{display:grid;grid-template-columns:minmax(0,1.32fr) minmax(250px,.68fr);gap:clamp(24px,5vw,72px);align-items:center}
+.hero__grid--solo{grid-template-columns:minmax(0,1fr)}
 .name{font:700 clamp(84px,15vw,204px)/.84 var(--font-display);text-transform:uppercase;letter-spacing:-.004em}
 .name span{display:block}
 .tagline{font:700 clamp(30px,4.3vw,56px)/1 var(--font-display);color:var(--mark);margin-top:20px}
@@ -356,7 +357,10 @@ main,.foot{position:relative;z-index:1}
 .foot__in{display:flex;justify-content:flex-end}
 .tb{position:relative;width:min(100%,860px);display:grid;grid-template-columns:1.25fr 1.35fr 1.2fr .9fr;border:1.5px solid var(--chalk);background:var(--tb-bg)}
 .tb__cell{min-width:0;padding:14px 16px 16px;border-right:1px solid var(--line-strong)}
-.tb__cell:nth-child(4){border-right:0}
+.tb__cell:nth-last-child(2){border-right:0}
+.tb--3{grid-template-columns:1.25fr 1.35fr 1.2fr}
+.tb--2{grid-template-columns:1fr 1.2fr;width:min(100%,560px)}
+.tb--1{grid-template-columns:1fr;width:min(100%,320px)}
 .tb__label{display:block;font:700 11px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;opacity:.72;margin-bottom:9px}
 .tb__name{display:block;font:700 34px/.95 var(--font-display);text-transform:uppercase;letter-spacing:.03em}
 .tb__cell a{text-decoration-color:rgba(238,242,246,.5);text-underline-offset:3px;overflow-wrap:anywhere}

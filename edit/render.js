@@ -19,6 +19,75 @@
   var A_DL = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 2v8M4.5 7L8 10.5 11.5 7M3 14h10"/></svg>';
   var A_NOTE = '<svg viewBox="0 0 34 26" aria-hidden="true"><path d="M2 21C9 22 20 19 27 8"/><path d="M19 8l8-1 1 8"/></svg>';
 
+  /* ------------------------------------------------------------ defaults */
+  var DEFAULT_ACCENT = '#f2c43a';
+  /* Small fixed words around the site. [key, default text, where it shows] */
+  var LABELS = [
+    ['allProjects', 'All projects', 'Back link at the top of a project page'],
+    ['sheet', 'Sheet', 'Page counter, as in "Sheet 3 of 17"'],
+    ['of', 'of', 'Page counter, the word between the numbers'],
+    ['prevProject', 'Previous project', 'Bottom of a project page'],
+    ['nextProject', 'Next project', 'Bottom of a project page'],
+    ['openProject', 'Open the project', 'On the full-width project card'],
+    ['seeProjects', 'See {n} {skill} projects', 'Link under each skill area. Keep {n} and {skill}'],
+    ['filterShow', 'Show', 'Before the filter buttons'],
+    ['filterAll', 'All', 'First filter button'],
+    ['colProject', 'Project', 'Column heading in the More projects list'],
+    ['colWhat', 'What it is', 'Column heading in the More projects list'],
+    ['colYear', 'Year', 'Column heading in the More projects list'],
+    ['noCover', 'photos for this one are not in the folder yet', 'Project page with no cover photo'],
+    ['noPhoto', 'photo coming soon', 'Home page while there is no photo of you'],
+    ['draft', 'Draft placeholder', 'Title on a yellow draft story'],
+    ['drawnBy', 'Drawn by', 'Contact block'],
+    ['email', 'Email', 'Contact block'],
+    ['copy', 'Copy address', 'Contact block, button under the email'],
+    ['linkedin', 'LinkedIn', 'Contact block'],
+    ['resume', 'Resume', 'Contact block'],
+    ['resumeDownload', 'Download PDF', 'Contact block, when a resume is uploaded'],
+    ['resumeSoon', 'PDF coming soon', 'Contact block, when there is no resume yet'],
+    ['rev', 'Rev', 'Contact block, before the month']
+  ];
+  var TABS = [['work', 'Projects'], ['about', 'About'], ['resume', 'Resume'], ['contact', 'Contact']];
+
+  function fill(obj, defaults) {
+    obj = obj && typeof obj === 'object' ? obj : {};
+    Object.keys(defaults).forEach(function (k) { if (obj[k] === undefined) { obj[k] = defaults[k]; } });
+    return obj;
+  }
+
+  /* Adds anything a content file from an older version of the editor is missing. Safe to run every time. */
+  function normalize(c) {
+    c.version = 2;
+    c.site = fill(c.site, { name: '', mark: 'MS', role: '', tagline: '', lede: '', email: '', linkedin: '', resume: '', photo: null,
+      photoCaption: '', rev: '', title: (c.site && c.site.name ? c.site.name + ' Portfolio' : 'Portfolio'),
+      description: 'Moataz Sayed is a mechanical engineer at Boston University. Projects in CAD, electronics, and testing.' });
+    var nav = Array.isArray(c.nav) ? c.nav.filter(function (n) { return n && TABS.some(function (x) { return x[0] === n.key; }); }) : [];
+    TABS.forEach(function (x) { if (!nav.some(function (n) { return n.key === x[0]; })) { nav.push({ key: x[0], label: x[1], show: true }); } });
+    nav.forEach(function (n) { if (n.show === undefined) { n.show = true; } if (n.label === undefined) { n.label = ''; } });
+    c.nav = nav;
+    c.home = fill(c.home, { showPhoto: true, showSkills: true, showArcs: true });
+    var btns = Array.isArray(c.home.buttons) ? c.home.buttons : [];
+    [['work', 'See the projects'], ['resume', 'Resume'], ['linkedin', 'LinkedIn']].forEach(function (x) {
+      if (!btns.some(function (b) { return b.key === x[0]; })) { btns.push({ key: x[0], label: x[1], show: true }); }
+    });
+    c.home.buttons = btns;
+    c.work = fill(c.work, { heading: 'Projects', moreHeading: 'More projects', showFilter: true });
+    c.pillars = c.pillars || [];
+    c.about = fill(c.about, { heading: 'About', intro: [], facts: [], showFacts: true, experienceHeading: 'Experience', showExperience: true,
+      jobs: [], skillsHeading: 'Skills', showSkills: true, skills: [] });
+    c.resume = fill(c.resume, { heading: 'Resume', buttonLabel: 'Download resume (PDF)', showLinkedin: true, linkedinLabel: 'LinkedIn profile',
+      hint: 'The download turns on as soon as the resume PDF is added.' });
+    c.contact = fill(c.contact, { showEmail: true, showLinkedin: true, showResume: true });
+    c.look = fill(c.look, { mode: 'dark', accent: DEFAULT_ACCENT });
+    var labels = {};
+    LABELS.forEach(function (l) { labels[l[0]] = l[1]; });
+    c.labels = fill(c.labels, labels);
+    c.projects = c.projects || [];
+    return c;
+  }
+  function tabOf(c, key) { return c.nav.filter(function (n) { return n.key === key; })[0] || { key: key, label: '', show: false }; }
+
+  /* ------------------------------------------------------------ pieces */
   function image(im, alt, eager, style) {
     var st = style ? ' style="' + style + '"' : '';
     return '<img src="' + t(im.src) + '" width="' + im.w + '" height="' + im.h + '" alt="' + t(alt) + '" ' +
@@ -107,13 +176,13 @@
       '<div class="step__body"><div class="step__text">' + text + '</div>' + groups.map(media).join('') + '</div></section>';
   }
 
-  function projectView(p, idx, total, prev, nxt, shown) {
+  function projectView(p, idx, total, prev, nxt, shown, L) {
     var numbered = p.numbered !== false;
     var facts = (p.facts || []).filter(function (f) { return f[0] && f[1]; }).map(function (f) { return '<dt>' + t(f[0]) + '</dt><dd>' + t(f[1]) + '</dd>'; }).join('');
     var rel = p.related && p.related.slug && shown[p.related.slug] ? '<a class="textlink related" href="#' + p.related.slug + '">' + t(p.related.label) + '</a>' : '';
     var cover = p.cover
       ? '<figure class="pcover">' + image(p.cover, p.cover.alt, false) + '</figure>'
-      : '<div class="pcover pcover--empty"><span>photos for this one are not in the folder yet</span></div>';
+      : '<div class="pcover pcover--empty"><span>' + t(L.noCover) + '</span></div>';
     var proc = '', steps = '';
     (p.steps || []).filter(function (s) { return !s.hidden; }).forEach(function (s, i) {
       var k = i + 1, b = numbered ? '<b>' + k + '</b>' : '';
@@ -123,7 +192,7 @@
     var longTitle = p.title.length > 14 ? ' ptitle--long' : '';
     return '\n<article id="' + p.slug + '" data-view="' + p.slug + '" data-title="' + t(p.title) + '">\n' +
       '<div class="wrap view-pad">\n' +
-      '<div class="crumbs"><a class="back" href="#work">' + A_BACK + 'All projects</a><span class="sheet-no">Sheet ' + idx + ' of ' + total + '</span></div>\n' +
+      '<div class="crumbs"><a class="back" href="#work">' + A_BACK + t(L.allProjects) + '</a><span class="sheet-no">' + t(L.sheet) + ' ' + idx + ' ' + t(L.of) + ' ' + total + '</span></div>\n' +
       '<div class="sheet">\n' +
       '<header class="phead">\n' +
       '<div>\n' +
@@ -140,14 +209,14 @@
       '<div class="steps">' + steps + '</div>\n' +
       '</div>\n' +
       '<nav class="pager" aria-label="Other projects">\n' +
-      '<a href="#' + prev.slug + '"><small>Previous project</small><b>' + t(prev.title) + '</b></a>\n' +
-      '<a href="#' + nxt.slug + '"><small>Next project</small><b>' + t(nxt.title) + '</b></a>\n' +
+      '<a href="#' + prev.slug + '"><small>' + t(L.prevProject) + '</small><b>' + t(prev.title) + '</b></a>\n' +
+      '<a href="#' + nxt.slug + '"><small>' + t(L.nextProject) + '</small><b>' + t(nxt.title) + '</b></a>\n' +
       '</nav>\n' +
       '</div>\n' +
       '</article>';
   }
 
-  function card(p) {
+  function card(p, L) {
     var variant = p.size || '', lead = variant === 'lead';
     var cls = 'card' + (variant ? ' card--' + variant : '');
     var cover = lead && p.lead ? p.lead : p.cover;
@@ -156,7 +225,7 @@
       if (p.strip && p.strip.length) {
         extra = '<ul class="strip">' + p.strip.map(function (s) { return '<li>' + image(s, '', false) + '<span>' + t(s.label) + '</span></li>'; }).join('') + '</ul>';
       }
-      extra += '<span class="card__go">Open the project' + A_ARROW + '</span>';
+      extra += '<span class="card__go">' + t(L.openProject) + A_ARROW + '</span>';
     }
     var pic = cover ? image(cover, p.cover ? p.cover.alt : '', lead) : '';
     return '<a class="' + cls + '" href="#' + p.slug + '" data-pillars="' + (p.pillars || []).join(' ') + '">\n' +
@@ -180,24 +249,28 @@
   }
 
   function visibleProjects(c) {
-    var all = (c.projects || []).filter(function (p) { return !p.hidden; });
+    var all = tabOf(c, 'work').show ? (c.projects || []).filter(function (p) { return !p.hidden; }) : [];
     var feat = all.filter(function (p) { return p.featured; });
     var more = all.filter(function (p) { return !p.featured; });
     return { all: all, feat: feat, more: more, order: feat.concat(more) };
   }
 
+  /* ------------------------------------------------------------ the page */
   function render(c) {
-    var site = c.site, vp = visibleProjects(c);
+    normalize(c);
+    var site = c.site, L = c.labels, vp = visibleProjects(c);
+    var showWork = tabOf(c, 'work').show, showAbout = tabOf(c, 'about').show, showResume = tabOf(c, 'resume').show, showContact = tabOf(c, 'contact').show;
     var counts = {};
     c.pillars.forEach(function (pl) { counts[pl.key] = vp.all.filter(function (p) { return (p.pillars || []).indexOf(pl.key) > -1; }).length; });
 
-    var cards = vp.feat.map(card).join('');
+    var cards = vp.feat.map(function (p) { return card(p, L); }).join('');
     var rows = vp.more.map(row).join('');
     var spans = c.pillars.map(function (pl) {
-      return '<li class="span"><div class="span__dim"><span>' + t(pl.label) + '</span></div><p>' + t(pl.text) + '</p>' +
-        '<button class="textlink" type="button" data-filter-go="' + pl.key + '">See ' + counts[pl.key] + ' ' + t(pl.word) + ' projects</button></li>';
+      var see = showWork ? '<button class="textlink" type="button" data-filter-go="' + pl.key + '">' +
+        t(String(L.seeProjects).replace('{n}', counts[pl.key]).replace('{skill}', pl.word)) + '</button>' : '';
+      return '<li class="span"><div class="span__dim"><span>' + t(pl.label) + '</span></div><p>' + t(pl.text) + '</p>' + see + '</li>';
     }).join('');
-    var chips = '<button class="chip" type="button" data-filter="all" aria-pressed="true">All</button>' + c.pillars.map(function (pl) {
+    var chips = '<button class="chip" type="button" data-filter="all" aria-pressed="true">' + t(L.filterAll) + '</button>' + c.pillars.map(function (pl) {
       return '<button class="chip" type="button" data-filter="' + pl.key + '" aria-pressed="false">' + t(pl.label) + '</button>';
     }).join('');
 
@@ -208,134 +281,190 @@
       portrait = '<div class="portrait__empty" role="img" aria-label="Placeholder for a photo of Moataz">' +
         '<svg viewBox="0 0 100 100"><circle cx="50" cy="38" r="17"/><path d="M16 92c2-22 16-33 34-33s32 11 34 33"/>' +
         '<path d="M50 6v10M50 60v0M6 38h10M84 38h10" stroke-dasharray="3 3"/></svg></div>' +
-        '<figcaption>photo coming soon</figcaption>';
+        '<figcaption>' + t(L.noPhoto) + '</figcaption>';
     }
 
-    var resumeBtn, resumeCell, resumeHint;
+    var R = c.resume, resumeBtn, resumeCell, resumeHint;
     if (site.resume) {
-      resumeBtn = '<a class="btn btn--primary" href="' + t(site.resume) + '" download>' + A_DL + 'Download resume (PDF)</a>';
-      resumeCell = '<a href="' + t(site.resume) + '" download>Download PDF</a>';
+      resumeBtn = '<a class="btn btn--primary" href="' + t(site.resume) + '" download>' + A_DL + t(R.buttonLabel) + '</a>';
+      resumeCell = '<a href="' + t(site.resume) + '" download>' + t(L.resumeDownload) + '</a>';
       resumeHint = '';
     } else {
-      resumeBtn = '<span class="btn btn--primary" aria-disabled="true">' + A_DL + 'Download resume (PDF)</span>';
-      resumeCell = '<span>PDF coming soon</span>';
-      resumeHint = '<p class="hint">The download turns on as soon as the resume PDF is added.</p>';
+      resumeBtn = '<span class="btn btn--primary" aria-disabled="true">' + A_DL + t(R.buttonLabel) + '</span>';
+      resumeCell = '<span>' + t(L.resumeSoon) + '</span>';
+      resumeHint = R.hint ? '<p class="hint">' + t(R.hint) + '</p>' : '';
     }
     var liText = site.linkedin.replace('https://www.', '').replace(/\/+$/, '');
-    var nameSpans = site.name.split(/\s+/).map(function (w) { return '<span>' + t(w) + '</span>'; }).join(' ');
+    var nameSpans = site.name.split(/\s+/).filter(Boolean).map(function (w) { return '<span>' + t(w) + '</span>'; }).join(' ');
+
+    /* buttons under the headline */
+    var actions = c.home.buttons.map(function (b) {
+      if (!b.show || !b.label) { return ''; }
+      if (b.key === 'work') { return showWork ? '<a class="btn btn--primary" href="#work">' + t(b.label) + A_ARROW + '</a>\n' : ''; }
+      if (b.key === 'resume') { return showResume ? '<a class="btn" href="#resume">' + t(b.label) + '</a>\n' : ''; }
+      if (b.key === 'linkedin') { return site.linkedin ? '<a class="btn" href="' + t(site.linkedin) + '" target="_blank" rel="noopener">' + t(b.label) + A_EXT + '</a>\n' : ''; }
+      return '';
+    }).join('');
 
     var moreBlock = '<div id="more"' + (vp.more.length ? '' : ' hidden') + '>\n' +
-      '<h2 class="h-mat more-title">More projects</h2>\n' +
+      '<h2 class="h-mat more-title">' + t(c.work.moreHeading) + '</h2>\n' +
       '<div class="sheet index">\n' +
-      '<div class="index__head" aria-hidden="true"><span></span><span>Project</span><span>What it is</span><span style="text-align:right">Year</span></div>\n' +
+      '<div class="index__head" aria-hidden="true"><span></span><span>' + t(L.colProject) + '</span><span>' + t(L.colWhat) + '</span><span style="text-align:right">' + t(L.colYear) + '</span></div>\n' +
       rows + '\n' +
       '</div>\n' +
       '</div>\n';
+    var filter = c.work.showFilter && c.pillars.length
+      ? '<div class="filter" role="group" aria-label="Filter projects by skill">\n' +
+        '<span class="filter__label">' + t(L.filterShow) + '</span>' + chips + '\n' +
+        '<p class="filter__count" id="filter-count" aria-live="polite"></p>\n' +
+        '</div>\n'
+      : '';
+    var workBlock = showWork
+      ? '<div class="wrap projects" id="projects">\n' +
+        '<div class="projects__head">\n' +
+        '<h2 class="h-mat">' + t(c.work.heading) + '</h2>\n' +
+        filter +
+        '</div>\n' +
+        '<div class="grid">' + cards + '</div>\n' +
+        moreBlock +
+        '</div>\n'
+      : '';
+    var showPhoto = c.home.showPhoto;
 
     var home = '\n<section id="home" data-view="home" data-title="Home">\n' +
       '<div class="hero">\n' +
-      fan('fan fan--draw', 'tr') + '\n' +
-      '<div class="wrap hero__grid">\n' +
+      (c.home.showArcs ? fan('fan fan--draw', 'tr') : '') + '\n' +
+      '<div class="wrap hero__grid' + (showPhoto ? '' : ' hero__grid--solo') + '">\n' +
       '<div class="hero__copy">\n' +
       '<h1 class="name">' + nameSpans + '</h1>\n' +
       '<p class="tagline">' + t(site.tagline) + '</p>\n' +
       '<p class="lede">' + t(site.lede) + '</p>\n' +
       '<div class="actions">\n' +
-      '<a class="btn btn--primary" href="#work">See the projects' + A_ARROW + '</a>\n' +
-      '<a class="btn" href="#resume">Resume</a>\n' +
-      '<a class="btn" href="' + t(site.linkedin) + '" target="_blank" rel="noopener">LinkedIn' + A_EXT + '</a>\n' +
+      actions +
       '</div>\n' +
       '</div>\n' +
-      '<figure class="portrait">' + portrait + '</figure>\n' +
+      (showPhoto ? '<figure class="portrait">' + portrait + '</figure>\n' : '') +
       '</div>\n' +
-      '<div class="wrap"><ul class="spans">' + spans + '</ul></div>\n' +
+      (c.home.showSkills && c.pillars.length ? '<div class="wrap"><ul class="spans">' + spans + '</ul></div>\n' : '') +
       '</div>\n' +
-      '<div class="wrap projects" id="projects">\n' +
-      '<div class="projects__head">\n' +
-      '<h2 class="h-mat">Projects</h2>\n' +
-      '<div class="filter" role="group" aria-label="Filter projects by skill">\n' +
-      '<span class="filter__label">Show</span>' + chips + '\n' +
-      '<p class="filter__count" id="filter-count" aria-live="polite"></p>\n' +
-      '</div>\n' +
-      '</div>\n' +
-      '<div class="grid">' + cards + '</div>\n' +
-      moreBlock +
-      '</div>\n' +
+      workBlock +
       '</section>';
 
-    var ab = c.about;
-    var jobs = (ab.jobs || []).map(function (j) {
-      var roles = (j.roles || []).map(function (r) {
-        var stories = (r.stories || []).map(function (s) {
-          return s.draft ? '<div class="draft"><b>Draft placeholder</b>' + t(s.text) + '</div>' : '<p class="story">' + t(s.text) + '</p>';
+    /* About and Resume share one page. Either can be switched off. */
+    var ab = c.about, about = '';
+    if (showAbout || showResume) {
+      var jobs = (ab.jobs || []).map(function (j) {
+        var roles = (j.roles || []).map(function (r) {
+          var stories = (r.stories || []).map(function (s) {
+            return s.draft ? '<div class="draft"><b>' + t(L.draft) + '</b>' + t(s.text) + '</div>' : '<p class="story">' + t(s.text) + '</p>';
+          }).join('\n');
+          return '<div class="role"><b>' + t(r.title) + '</b><span>' + t(r.meta) + '</span></div>\n' + stories;
         }).join('\n');
-        return '<div class="role"><b>' + t(r.title) + '</b><span>' + t(r.meta) + '</span></div>\n' + stories;
+        return '<div class="job">\n<h3 class="co">' + t(j.company) + '</h3>\n' + roles + '\n</div>';
       }).join('\n');
-      return '<div class="job">\n<h3 class="co">' + t(j.company) + '</h3>\n' + roles + '\n</div>';
-    }).join('\n');
-    var skills = (ab.skills || []).map(function (s) {
-      return '<div><h3>' + t(s.title) + '</h3><ul>' + (s.items || []).map(function (x) { return '<li>' + t(x) + '</li>'; }).join('') + '</ul></div>';
-    }).join('\n');
-    var aboutFacts = (ab.facts || []).filter(function (f) { return f[0] && f[1]; }).map(function (f) { return '<dt>' + t(f[0]) + '</dt><dd>' + t(f[1]) + '</dd>'; }).join('\n');
-
-    var about = '\n<section id="about" data-view="about" data-title="About">\n' +
-      '<div class="wrap view-pad">\n' +
-      '<div class="crumbs"><a class="back" href="#work">' + A_BACK + 'All projects</a><span class="sheet-no">About</span></div>\n' +
-      '<div class="sheet">\n' +
-      '<header class="about__head">\n' +
-      '<div class="about__intro">\n' +
-      '<h1 class="ptitle">About</h1>\n' +
-      (ab.intro || []).map(function (x) { return '<p>' + t(x) + '</p>'; }).join('\n') + '\n' +
-      '</div>\n' +
-      '<dl class="facts">\n' + aboutFacts + '\n</dl>\n' +
-      '</header>\n' +
-      '<section class="block">\n' +
-      '<h2 class="block__title">Experience</h2>\n' +
-      '<div>\n' + jobs + '\n</div>\n' +
-      '</section>\n' +
-      '<section class="block">\n' +
-      '<h2 class="block__title">Skills</h2>\n' +
-      '<div class="skills">\n' + skills + '\n</div>\n' +
-      '</section>\n' +
-      '<section class="block" id="resume-block">\n' +
-      '<h2 class="block__title">Resume</h2>\n' +
-      '<div class="resume">\n' +
-      resumeBtn + '\n' +
-      '<a class="btn" href="' + t(site.linkedin) + '" target="_blank" rel="noopener">LinkedIn profile' + A_EXT + '</a>\n' +
-      resumeHint + '\n' +
-      '</div>\n' +
-      '</section>\n' +
-      '</div>\n' +
-      '</div>\n' +
-      '</section>';
+      var skills = (ab.skills || []).map(function (s) {
+        return '<div><h3>' + t(s.title) + '</h3><ul>' + (s.items || []).map(function (x) { return '<li>' + t(x) + '</li>'; }).join('') + '</ul></div>';
+      }).join('\n');
+      var aboutFacts = (ab.facts || []).filter(function (f) { return f[0] && f[1]; }).map(function (f) { return '<dt>' + t(f[0]) + '</dt><dd>' + t(f[1]) + '</dd>'; }).join('\n');
+      var pageName = showAbout ? ab.heading : R.heading;
+      var aboutParts = '';
+      if (showAbout) {
+        aboutParts += '<header class="about__head">\n' +
+          '<div class="about__intro">\n' +
+          '<h1 class="ptitle">' + t(ab.heading) + '</h1>\n' +
+          (ab.intro || []).map(function (x) { return '<p>' + t(x) + '</p>'; }).join('\n') + '\n' +
+          '</div>\n' +
+          (ab.showFacts && aboutFacts ? '<dl class="facts">\n' + aboutFacts + '\n</dl>\n' : '') +
+          '</header>\n';
+        if (ab.showExperience && (ab.jobs || []).length) {
+          aboutParts += '<section class="block">\n' +
+            '<h2 class="block__title">' + t(ab.experienceHeading) + '</h2>\n' +
+            '<div>\n' + jobs + '\n</div>\n' +
+            '</section>\n';
+        }
+        if (ab.showSkills && (ab.skills || []).length) {
+          aboutParts += '<section class="block">\n' +
+            '<h2 class="block__title">' + t(ab.skillsHeading) + '</h2>\n' +
+            '<div class="skills">\n' + skills + '\n</div>\n' +
+            '</section>\n';
+        }
+      }
+      if (showResume) {
+        aboutParts += '<section class="block" id="resume-block">\n' +
+          '<h2 class="block__title">' + t(R.heading) + '</h2>\n' +
+          '<div class="resume">\n' +
+          resumeBtn + '\n' +
+          (R.showLinkedin && site.linkedin ? '<a class="btn" href="' + t(site.linkedin) + '" target="_blank" rel="noopener">' + t(R.linkedinLabel) + A_EXT + '</a>\n' : '') +
+          resumeHint + '\n' +
+          '</div>\n' +
+          '</section>\n';
+      }
+      about = '\n<section id="about" data-view="about" data-title="' + t(pageName) + '">\n' +
+        '<div class="wrap view-pad">\n' +
+        '<div class="crumbs"><a class="back" href="#work">' + A_BACK + t(L.allProjects) + '</a><span class="sheet-no">' + t(pageName) + '</span></div>\n' +
+        '<div class="sheet">\n' +
+        aboutParts +
+        '</div>\n' +
+        '</div>\n' +
+        '</section>';
+    }
 
     var views = '', n = vp.order.length, shown = {};
     vp.order.forEach(function (p) { shown[p.slug] = true; });
     vp.order.forEach(function (p, i) {
-      views += projectView(p, i + 1, n, vp.order[(i - 1 + n) % n], vp.order[(i + 1) % n], shown);
+      views += projectView(p, i + 1, n, vp.order[(i - 1 + n) % n], vp.order[(i + 1) % n], shown, L);
     });
 
-    var foot = '<footer class="foot" id="contact">\n' +
-      fan('fan fan--foot', 'bl') + '\n' +
-      '<div class="wrap foot__in">\n' +
-      '<div class="tb">\n' +
-      '<div class="tb__cell"><span class="tb__label">Drawn by</span><span class="tb__name">' + t(site.name) + '</span><span class="tb__sub">' + t(site.role) + '</span></div>\n' +
-      '<div class="tb__cell"><span class="tb__label">Email</span><a href="mailto:' + t(site.email) + '">' + t(site.email) + '</a><br><button class="copy" type="button" data-copy="' + t(site.email) + '">Copy address</button></div>\n' +
-      '<div class="tb__cell"><span class="tb__label">LinkedIn</span><a href="' + t(site.linkedin) + '" target="_blank" rel="noopener">' + t(liText) + '</a></div>\n' +
-      '<div class="tb__cell"><span class="tb__label">Resume</span>' + resumeCell + '</div>\n' +
-      '<div class="tb__base"><span>Sheet: <span id="sheet-label">Home</span></span><span>Rev: ' + t(site.rev) + '</span></div>\n' +
-      '</div>\n' +
-      '</div>\n' +
-      '</footer>';
+    /* contact block */
+    var foot;
+    if (showContact) {
+      var K = c.contact, cells = ['<div class="tb__cell"><span class="tb__label">' + t(L.drawnBy) + '</span><span class="tb__name">' + t(site.name) + '</span><span class="tb__sub">' + t(site.role) + '</span></div>'];
+      if (K.showEmail && site.email) {
+        cells.push('<div class="tb__cell"><span class="tb__label">' + t(L.email) + '</span><a href="mailto:' + t(site.email) + '">' + t(site.email) + '</a><br><button class="copy" type="button" data-copy="' + t(site.email) + '">' + t(L.copy) + '</button></div>');
+      }
+      if (K.showLinkedin && site.linkedin) {
+        cells.push('<div class="tb__cell"><span class="tb__label">' + t(L.linkedin) + '</span><a href="' + t(site.linkedin) + '" target="_blank" rel="noopener">' + t(liText) + '</a></div>');
+      }
+      if (K.showResume && showResume) {
+        cells.push('<div class="tb__cell"><span class="tb__label">' + t(L.resume) + '</span>' + resumeCell + '</div>');
+      }
+      foot = '<footer class="foot" id="contact">\n' +
+        (c.home.showArcs ? fan('fan fan--foot', 'bl') : '') + '\n' +
+        '<div class="wrap foot__in">\n' +
+        '<div class="tb' + (cells.length < 4 ? ' tb--' + cells.length : '') + '">\n' +
+        cells.join('\n') + '\n' +
+        '<div class="tb__base"><span>' + t(L.sheet) + ': <span id="sheet-label">Home</span></span><span>' + t(L.rev) + ': ' + t(site.rev) + '</span></div>\n' +
+        '</div>\n' +
+        '</div>\n' +
+        '</footer>';
+    } else {
+      foot = '<footer class="foot"></footer>';
+    }
 
-    return { main: '\n' + home + '\n' + about + '\n' + views + '\n', foot: foot, counts: counts };
+    /* top menu */
+    var nav = c.nav.filter(function (nv) { return nv.show && nv.label; }).map(function (nv) {
+      if (nv.key === 'contact') { return '<button type="button" data-jump="contact">' + t(nv.label) + '</button>'; }
+      return '<a href="#' + nv.key + '" data-nav="' + nv.key + '">' + t(nv.label) + '</a>';
+    }).join('\n');
+    var brand = '<a class="brand" href="#home" aria-label="' + t(site.name) + ', home"><span class="brand__mark" aria-hidden="true">' + t(site.mark) + '</span><span class="brand__name">' + t(site.name) + '</span></a>';
+    var accent = /^#[0-9a-f]{6}$/i.test(c.look.accent || '') ? c.look.accent.toLowerCase() : DEFAULT_ACCENT;
+    var look = accent === DEFAULT_ACCENT ? '' : '\n<style>:root,:root[data-mode="dark"]{--mark:' + accent + ';--mark-hover:' + accent + ';--draft-label:' + accent + '}</style>';
+
+    return {
+      main: '\n' + home + (about ? '\n' + about : '') + '\n' + views + '\n', foot: foot, nav: nav, brand: brand,
+      title: t(site.title), desc: t(site.description), mode: c.look.mode === 'light' ? 'light' : 'dark', look: look, counts: counts
+    };
   }
 
   /* Put the rendered content into the page shell (the HTML, CSS and script that never change). */
   function buildPage(content, shell) {
-    var r = render(content);
-    if (shell.indexOf('<!--MAIN-->') < 0 || shell.indexOf('<!--FOOT-->') < 0) { throw new Error('The page shell is missing its content markers.'); }
-    return shell.replace('<!--MAIN-->', function () { return r.main; }).replace('<!--FOOT-->', function () { return r.foot; });
+    var r = render(content), out = shell;
+    [['<!--MAIN-->', r.main], ['<!--FOOT-->', r.foot], ['<!--NAV-->', r.nav], ['<!--BRAND-->', r.brand], ['<!--TITLE-->', r.title],
+      ['<!--DESC-->', r.desc], ['<!--MODE-->', r.mode], ['<!--LOOK-->', r.look]].forEach(function (x) {
+      if (out.indexOf(x[0]) < 0) { throw new Error('The page shell is out of date. Reload the editor. (Missing ' + x[0].replace(/[<!>-]/g, '') + ')'); }
+      out = out.replace(x[0], function () { return x[1]; });
+    });
+    return out;
   }
 
   /* Every file under assets/ that the content points at. */
@@ -365,9 +494,10 @@
       seen[p.slug] = true;
       (p.steps || []).forEach(function (s, k) { if (!s.title) { errs.push(name + ': section ' + (k + 1) + ' needs a title.'); } });
     });
-    if (!(c.projects || []).some(function (p) { return !p.hidden; })) { errs.push('At least one project has to be visible.'); }
+    if (!c.site || !String(c.site.name || '').trim()) { errs.push('The site needs your name. Add it under Home.'); }
     return errs;
   }
 
-  return { render: render, buildPage: buildPage, assetRefs: assetRefs, check: check, escape: t };
+  return { render: render, buildPage: buildPage, assetRefs: assetRefs, check: check, normalize: normalize, escape: t,
+    LABELS: LABELS, DEFAULT_ACCENT: DEFAULT_ACCENT };
 });
