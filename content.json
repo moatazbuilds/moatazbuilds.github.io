@@ -8,7 +8,11 @@
   "email": "mmsayed@bu.edu",
   "linkedin": "https://www.linkedin.com/in/moataz-sayed-443882280/",
   "resume": "",
-  "photo": null,
+  "photo": {
+   "src": "assets/img/portrait-xdzp.webp",
+   "w": 800,
+   "h": 1000
+  },
   "photoCaption": "that's me",
   "rev": "Nov 2026",
   "mark": "MS",
