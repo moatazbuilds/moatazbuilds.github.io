@@ -1958,8 +1958,17 @@
    ],
    "numbered": false,
    "related": null,
-   "cover": null,
-   "thumb": null,
+   "cover": {
+    "src": "assets/img/cover-neodymium-siphon-7opu.webp",
+    "w": 572,
+    "h": 429,
+    "alt": ""
+   },
+   "thumb": {
+    "src": "assets/img/thumb-neodymium-siphon-h2na.webp",
+    "w": 240,
+    "h": 180
+   },
    "lead": null,
    "strip": [],
    "steps": [
@@ -1990,7 +1999,12 @@
      "note": "",
      "media": []
     }
-   ]
+   ],
+   "share": {
+    "src": "assets/og/neodymium-siphon-awh7.jpg",
+    "w": 600,
+    "h": 315
+   }
   },
   {
    "slug": "rocket-nozzle",
@@ -2469,8 +2483,17 @@
    ],
    "numbered": true,
    "related": null,
-   "cover": null,
-   "thumb": null,
+   "cover": {
+    "src": "assets/img/cover-four-bar-linkage-k70x.webp",
+    "w": 960,
+    "h": 720,
+    "alt": ""
+   },
+   "thumb": {
+    "src": "assets/img/thumb-four-bar-linkage-6n25.webp",
+    "w": 240,
+    "h": 180
+   },
    "lead": null,
    "strip": [],
    "steps": [
@@ -2492,7 +2515,23 @@
      "bullets": [],
      "links": [],
      "note": "",
-     "media": []
+     "media": [
+      {
+       "cols": 1,
+       "ratio": "",
+       "wide": false,
+       "items": [
+        {
+         "type": "video",
+         "src": "assets/video/four-bar-linkage-ks5xexjumry-360-7zvv.mp4",
+         "poster": "assets/img/poster-four-bar-linkage-ks5xexjumry-360-7zvv.webp",
+         "w": 640,
+         "h": 314,
+         "cap": ""
+        }
+       ]
+      }
+     ]
     },
     {
      "title": "Detail",
@@ -2502,9 +2541,30 @@
      "bullets": [],
      "links": [],
      "note": "",
-     "media": []
+     "media": [
+      {
+       "cols": 1,
+       "ratio": "",
+       "wide": false,
+       "items": [
+        {
+         "type": "video",
+         "src": "assets/video/four-bar-linkage-8vmfsdx8c-7-576-w98u.mp4",
+         "poster": "assets/img/poster-four-bar-linkage-8vmfsdx8c-7-576-w98u.webp",
+         "w": 788,
+         "h": 576,
+         "cap": ""
+        }
+       ]
+      }
+     ]
     }
-   ]
+   ],
+   "share": {
+    "src": "assets/og/four-bar-linkage-82gm.jpg",
+    "w": 1088,
+    "h": 571
+   }
   },
   {
    "slug": "temperature-box",
@@ -2538,8 +2598,17 @@
    ],
    "numbered": true,
    "related": null,
-   "cover": null,
-   "thumb": null,
+   "cover": {
+    "src": "assets/img/cover-temperature-box-5vos.webp",
+    "w": 600,
+    "h": 450,
+    "alt": ""
+   },
+   "thumb": {
+    "src": "assets/img/thumb-temperature-box-inmi.webp",
+    "w": 240,
+    "h": 180
+   },
    "lead": null,
    "strip": [],
    "steps": [
@@ -2551,7 +2620,23 @@
      "bullets": [],
      "links": [],
      "note": "",
-     "media": []
+     "media": [
+      {
+       "cols": 1,
+       "ratio": "",
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/temperature-box-2db10c46-977a-4cea-b9e1-ad71aa833493-rfxt.webp",
+         "w": 1200,
+         "h": 900,
+         "cap": "",
+         "alt": ""
+        }
+       ]
+      }
+     ]
     },
     {
      "title": "Result",
@@ -2563,7 +2648,12 @@
      "note": "",
      "media": []
     }
-   ]
+   ],
+   "share": {
+    "src": "assets/og/temperature-box-865n.jpg",
+    "w": 600,
+    "h": 315
+   }
   },
   {
    "slug": "laser-cut-portfolio",
@@ -2594,8 +2684,17 @@
    ],
    "numbered": true,
    "related": null,
-   "cover": null,
-   "thumb": null,
+   "cover": {
+    "src": "assets/img/cover-laser-cut-portfolio-fuq1.webp",
+    "w": 600,
+    "h": 450,
+    "alt": ""
+   },
+   "thumb": {
+    "src": "assets/img/thumb-laser-cut-portfolio-n3ti.webp",
+    "w": 240,
+    "h": 180
+   },
    "lead": null,
    "strip": [],
    "steps": [
@@ -2607,7 +2706,23 @@
      "bullets": [],
      "links": [],
      "note": "",
-     "media": []
+     "media": [
+      {
+       "cols": 1,
+       "ratio": "",
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/laser-cut-portfolio-44c5cb8d-fb32-4851-bef3-7affb7288920-z705.webp",
+         "w": 538,
+         "h": 538,
+         "cap": "",
+         "alt": ""
+        }
+       ]
+      }
+     ]
     },
     {
      "title": "Digitize",
@@ -2617,7 +2732,23 @@
      "bullets": [],
      "links": [],
      "note": "",
-     "media": []
+     "media": [
+      {
+       "cols": 1,
+       "ratio": "",
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/laser-cut-portfolio-8b7e83d9-d8f7-4a98-9f44-8eda5d8a97d1-8ctj.webp",
+         "w": 600,
+         "h": 609,
+         "cap": "",
+         "alt": ""
+        }
+       ]
+      }
+     ]
     },
     {
      "title": "Make",
@@ -2627,9 +2758,30 @@
      "bullets": [],
      "links": [],
      "note": "",
-     "media": []
+     "media": [
+      {
+       "cols": 1,
+       "ratio": "",
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/laser-cut-portfolio-59494bc4-68d8-46b9-aac4-97871ae44387-5msy.webp",
+         "w": 600,
+         "h": 803,
+         "cap": "",
+         "alt": ""
+        }
+       ]
+      }
+     ]
     }
-   ]
+   ],
+   "share": {
+    "src": "assets/og/laser-cut-portfolio-c1sl.jpg",
+    "w": 600,
+    "h": 315
+   }
   },
   {
    "slug": "first-robotics",
@@ -2665,8 +2817,17 @@
    ],
    "numbered": true,
    "related": null,
-   "cover": null,
-   "thumb": null,
+   "cover": {
+    "src": "assets/img/cover-first-robotics-smtl.webp",
+    "w": 585,
+    "h": 439,
+    "alt": ""
+   },
+   "thumb": {
+    "src": "assets/img/thumb-first-robotics-yqc9.webp",
+    "w": 240,
+    "h": 180
+   },
    "lead": null,
    "strip": [],
    "steps": [
@@ -2678,7 +2839,23 @@
      "bullets": [],
      "links": [],
      "note": "",
-     "media": []
+     "media": [
+      {
+       "cols": 1,
+       "ratio": "",
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/first-robotics-6041df84-e416-477d-b57e-c31ce9f6f8d7-g6n1.webp",
+         "w": 824,
+         "h": 384,
+         "cap": "",
+         "alt": ""
+        }
+       ]
+      }
+     ]
     },
     {
      "title": "Intake, version 2",
@@ -2689,7 +2866,23 @@
      "bullets": [],
      "links": [],
      "note": "",
-     "media": []
+     "media": [
+      {
+       "cols": 1,
+       "ratio": "",
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/first-robotics-295a0754-ce4a-45d1-8d74-04c9894ad9a5-dejs.webp",
+         "w": 828,
+         "h": 388,
+         "cap": "",
+         "alt": ""
+        }
+       ]
+      }
+     ]
     },
     {
      "title": "Final intake",
@@ -2699,7 +2892,23 @@
      "bullets": [],
      "links": [],
      "note": "",
-     "media": []
+     "media": [
+      {
+       "cols": 1,
+       "ratio": "",
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/first-robotics-a9943892-7150-4e6a-8671-dc382b008ac6-z433.webp",
+         "w": 826,
+         "h": 626,
+         "cap": "",
+         "alt": ""
+        }
+       ]
+      }
+     ]
     },
     {
      "title": "Competition",
@@ -2709,9 +2918,45 @@
      "bullets": [],
      "links": [],
      "note": "",
-     "media": []
+     "media": [
+      {
+       "cols": 1,
+       "ratio": "",
+       "wide": false,
+       "items": [
+        {
+         "type": "img",
+         "src": "assets/img/first-robotics-74c01a4a-b245-4b2c-93e6-c29316f1ce7e-yf85.webp",
+         "w": 824,
+         "h": 630,
+         "cap": "",
+         "alt": ""
+        }
+       ]
+      },
+      {
+       "cols": 2,
+       "ratio": "",
+       "wide": false,
+       "items": [
+        {
+         "type": "video",
+         "src": "assets/video/first-robotics-ljyf-sygeqd-360-rm3v.mp4",
+         "poster": "assets/img/poster-first-robotics-ljyf-sygeqd-360-rm3v.webp",
+         "w": 572,
+         "h": 360,
+         "cap": "Me and my teammate assembling intake design "
+        }
+       ]
+      }
+     ]
     }
-   ]
+   ],
+   "share": {
+    "src": "assets/og/first-robotics-fy7h.jpg",
+    "w": 600,
+    "h": 315
+   }
   }
  ],
  "nav": [
@@ -2802,6 +3047,8 @@
   "resume": "Resume",
   "resumeDownload": "Download PDF",
   "resumeSoon": "PDF coming soon",
-  "rev": "Rev"
+  "rev": "Rev",
+  "shareCopy": "Copy link to share",
+  "shareOpen": "Open"
  }
 }
